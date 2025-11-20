@@ -8,6 +8,24 @@ from faker import Faker
 import json
 import random
 
+# Valid US city-state pairs for realistic geolocation
+VALID_CITY_STATE_PAIRS = [
+    ('New York', 'NY'), ('Los Angeles', 'CA'), ('Chicago', 'IL'), ('Houston', 'TX'),
+    ('Phoenix', 'AZ'), ('Philadelphia', 'PA'), ('San Antonio', 'TX'), ('San Diego', 'CA'),
+    ('Dallas', 'TX'), ('San Jose', 'CA'), ('Austin', 'TX'), ('Jacksonville', 'FL'),
+    ('Fort Worth', 'TX'), ('Columbus', 'OH'), ('Charlotte', 'NC'), ('San Francisco', 'CA'),
+    ('Indianapolis', 'IN'), ('Austin', 'TX'), ('Seattle', 'WA'), ('Denver', 'CO'),
+    ('Boston', 'MA'), ('Miami', 'FL'), ('Portland', 'OR'), ('Atlanta', 'GA'),
+    ('Nashville', 'TN'), ('Detroit', 'MI'), ('Minneapolis', 'MN'), ('Memphis', 'TN'),
+    ('Baltimore', 'MD'), ('Louisville', 'KY'), ('Milwaukee', 'WI'), ('Albuquerque', 'NM'),
+    ('Tucson', 'AZ'), ('Fresno', 'CA'), ('Sacramento', 'CA'), ('Long Beach', 'CA'),
+    ('Kansas City', 'MO'), ('Mesa', 'AZ'), ('Virginia Beach', 'VA'), ('Atlanta', 'GA'),
+    ('New Orleans', 'LA'), ('Cleveland', 'OH'), ('Plano', 'TX'), ('Arlington', 'TX'),
+    ('Las Vegas', 'NV'), ('Corpus Christi', 'TX'), ('Lexington', 'KY'), ('Stockton', 'CA'),
+    ('St. Louis', 'MO'), ('Cincinnati', 'OH'), ('Anchorage', 'AK'), ('Henderson', 'NV'),
+    ('Chandler', 'AZ'), ('Laredo', 'TX'), ('Lincoln', 'NE'), ('Madison', 'WI'),
+]
+
 # Setup logging
 FORMAT = "%(asctime)s - [%(levelname)s] - %(message)s"
 DATEFMT = "%Y-%m-%d %H:%M:%S"
@@ -81,6 +99,9 @@ def generate_synthetic_users(n_users: int = N_USERS) -> pd.DataFrame:
             fraud_propensity = np.random.uniform(0.25, 0.40)
             claim_frequency = 'high'
 
+        # Select a valid city-state pair for user location
+        user_city, user_state = VALID_CITY_STATE_PAIRS[np.random.randint(len(VALID_CITY_STATE_PAIRS))]
+        
         user = {
             # user biodata
             'user_id': str(uuid.uuid4()),
@@ -90,8 +111,8 @@ def generate_synthetic_users(n_users: int = N_USERS) -> pd.DataFrame:
             'phone_number': fake.phone_number(),
             'date_of_birth': fake.date_of_birth(minimum_age=18, maximum_age=75),
             'address': fake.street_address(),
-            'city': fake.city(),
-            'state': fake.state_abbr(),
+            'city': user_city,
+            'state': user_state,
             'country': 'USA',
             'postal_code': fake.zipcode(),
 
@@ -454,11 +475,10 @@ def generate_transaction_contexts(
 
         # Geolocation
         if is_fraud_identity_theft:
-            # Identity theft: unusual location
+            # Identity theft: unusual location with valid city-state pair
             geolocation_distance = np.random.uniform(500, 3000)
             is_geolocation_anomaly = True
-            location_city = fake.city()
-            location_state = fake.state_abbr()
+            location_city, location_state = VALID_CITY_STATE_PAIRS[np.random.randint(len(VALID_CITY_STATE_PAIRS))]
         else:
             # Normal: nearby location
             geolocation_distance = np.random.uniform(0, 50)
