@@ -476,7 +476,7 @@ def generate_transaction_contexts(
         # Geolocation
         if is_fraud_identity_theft:
             # Identity theft: unusual location with valid city-state pair
-            geolocation_distance = np.random.uniform(500, 3000)
+            geolocation_distance = np.random.uniform(300, 2000)
             is_geolocation_anomaly = True
             location_city, location_state = VALID_CITY_STATE_PAIRS[np.random.randint(len(VALID_CITY_STATE_PAIRS))]
         else:
