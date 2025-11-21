@@ -1,0 +1,20 @@
+{
+  "generation_date": "2025-11-20T12:38:56.371548",
+  "n_users": 1000,
+  "n_claims": 9259,
+  "fraud_rate": 0.14440004320120964,
+  "total_claim_amount": 28605166.450000003,
+  "avg_claim_amount": 3089.4444810454697,
+  "risk_distribution": {
+    "low": 684,
+    "medium": 209,
+    "high": 107
+  },
+  "fraud_type_distribution": {
+    "exaggerated": 474,
+    "staged": 315,
+    "out_of_pattern": 215,
+    "duplicate": 205,
+    "identity_theft": 128
+  }
+}
