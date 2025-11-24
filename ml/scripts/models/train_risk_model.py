@@ -13,9 +13,9 @@ from datetime import datetime
 # Configuration
 RANDOM_STATE = 42
 TEST_SIZE = 0.2
-MODEL_OUTPUT_DIR = '../artifacts/models'
-PLOTS_DIR = '../plots'
-DATA_PATH = '../data/synthetic/insurance_claims_v1_full.csv'
+MODEL_OUTPUT_DIR = '../../artifacts/models'
+PLOTS_DIR = '../../plots'
+DATA_PATH = '../../data/synthetic/insurance_claims_v1_full.csv'
 
 def load_and_prepare_data():
     """Load and prepare data for risk scoring model"""
