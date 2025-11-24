@@ -1,0 +1,33 @@
+{
+  "model_type": "Ensemble (Isolation Forest + XGBoost)",
+  "objective": "Binary Fraud Classification",
+  "training_date": "2025-11-24T12:19:03.832615",
+  "n_features": 43,
+  "n_training_samples": 7407,
+  "n_test_samples": 1852,
+  "fraud_rate_train": 0.1444579451869853,
+  "fraud_rate_test": 0.14416846652267817,
+  "smote_applied": true,
+  "test_metrics": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "auc_roc": 1.0
+  },
+  "isolation_forest": {
+    "contamination": 0.1444579451869853,
+    "n_estimators": 100
+  },
+  "top_10_features": [
+    "is_suspicious_session",
+    "is_rushed_form",
+    "form_fill_time_seconds",
+    "form_fill_time_minutes",
+    "has_few_documents",
+    "staged_signal",
+    "is_round_amount",
+    "geolocation_risk",
+    "session_duration_seconds",
+    "risk_category_encoded"
+  ]
+}
