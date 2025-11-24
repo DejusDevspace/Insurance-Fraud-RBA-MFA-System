@@ -1,0 +1,26 @@
+{
+  "model_type": "XGBoost Classifier",
+  "objective": "Multi-class Risk Classification (Low/Medium/High)",
+  "training_date": "2025-11-21T14:34:42.309175",
+  "n_features": 40,
+  "n_training_samples": 7407,
+  "n_test_samples": 1852,
+  "test_accuracy": 0.9406047516198704,
+  "risk_level_mapping": {
+    "0": "Low",
+    "1": "Medium",
+    "2": "High"
+  },
+  "top_10_features": [
+    "is_rushed_form",
+    "is_suspicious_session",
+    "form_fill_time_minutes",
+    "is_geolocation_anomaly_numeric",
+    "geolocation_risk_score",
+    "is_untrusted_device",
+    "session_duration_seconds",
+    "claims_last_30_days",
+    "has_multiple_recent_claims",
+    "claims_intensity"
+  ]
+}
