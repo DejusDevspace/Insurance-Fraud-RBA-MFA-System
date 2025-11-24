@@ -1,7 +1,7 @@
 {
   "model_type": "Ensemble (Isolation Forest + XGBoost)",
   "objective": "Binary Fraud Classification",
-  "training_date": "2025-11-24T12:19:03.832615",
+  "training_date": "2025-11-24T14:00:33.433442",
   "n_features": 43,
   "n_training_samples": 7407,
   "n_test_samples": 1852,

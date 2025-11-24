@@ -474,6 +474,10 @@ def main():
     # Engineer features
     df, label_encoders = engineer_fraud_features(df)
 
+    # Save feature engineered dataset
+    df.to_csv("../../data/processed/fraud_engineered_v1.csv", index=False)
+    print(f"✓ Saved fraud engineered dataset to ml/data/processed/fraud_engineered_v1.csv")
+
     # Select features
     feature_names = select_fraud_features()
     print(f"\nSelected {len(feature_names)} features for fraud detection")
