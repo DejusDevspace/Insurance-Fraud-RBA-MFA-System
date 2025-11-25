@@ -93,28 +93,53 @@ def test_risk_explainer(explainer, X_test, feature_names, n_samples=5):
 
     print("✓ SHAP values calculated")
 
-    # Generate waterfall plot for first sample
-    print("\nGenerating sample waterfall plot...")
+    # Generate waterfall plots for all three risk classes
+    print("\nGenerating waterfall plots for all risk classes...")
 
-    # Get prediction for first sample
-    sample_shap = shap_values[0] if isinstance(shap_values, list) else shap_values
+    risk_class_names = ['Low Risk', 'Medium Risk', 'High Risk']
 
-    # Create explanation object
-    explanation = shap.Explanation(
-        values=sample_shap[0],
-        base_values=explainer.expected_value[0] if isinstance(explainer.expected_value,
-                                                              (list, np.ndarray)) else explainer.expected_value,
-        data=X_test[0],
-        feature_names=feature_names
-    )
+    if isinstance(shap_values, list):
+        # List format
+        for class_idx, class_name in enumerate(risk_class_names):
+            sample_shap_values = shap_values[class_idx][0]
+            base_value = explainer.expected_value[class_idx]
 
-    # Save waterfall plot
-    plt.figure(figsize=(10, 6))
-    shap.waterfall_plot(explanation, show=False)
-    plt.tight_layout()
-    plt.savefig(f'{PLOTS_DIR}/risk_shap_waterfall_sample.png', dpi=300, bbox_inches='tight')
-    plt.close()
-    print(f"✓ Waterfall plot saved to {PLOTS_DIR}/risk_shap_waterfall_sample.png")
+            explanation = shap.Explanation(
+                values=sample_shap_values,
+                base_values=base_value,
+                data=X_test[0],
+                feature_names=feature_names
+            )
+
+            plt.figure(figsize=(10, 6))
+            shap.waterfall_plot(explanation, show=False)
+            plt.title(f'SHAP Explanation - {class_name}')
+            plt.tight_layout()
+            plt.savefig(f'{PLOTS_DIR}/risk_shap_waterfall_{class_name.lower().replace(" ", "_")}.png',
+                        dpi=300, bbox_inches='tight')
+            plt.close()
+            print(f"✓ Waterfall plot for {class_name} saved")
+    else:
+        # 3D array format
+        for class_idx, class_name in enumerate(risk_class_names):
+            sample_shap_values = shap_values[0, :, class_idx]
+            base_value = explainer.expected_value[class_idx]
+
+            explanation = shap.Explanation(
+                values=sample_shap_values,
+                base_values=base_value,
+                data=X_test[0],
+                feature_names=feature_names
+            )
+
+            plt.figure(figsize=(10, 6))
+            shap.waterfall_plot(explanation, show=False)
+            plt.title(f'SHAP Explanation - {class_name}')
+            plt.tight_layout()
+            plt.savefig(f'{PLOTS_DIR}/risk_shap_waterfall_{class_name.lower().replace(" ", "_")}.png',
+                        dpi=300, bbox_inches='tight')
+            plt.close()
+            print(f"✓ Waterfall plot for {class_name} saved")
 
     return shap_values
 
@@ -158,7 +183,7 @@ def test_fraud_explainer(explainer, X_test, feature_names, n_samples=5):
     return shap_values
 
 
-def create_explanation_function(explainer, feature_names):
+def create_explanation_function(explainer, feature_names, model=None):
     """
     Create a function that generates explanations for new samples
     This will be used in the backend API
@@ -184,11 +209,38 @@ def create_explanation_function(explainer, feature_names):
 
         # Handle multi-class output
         if isinstance(shap_values, list):
-            # For multi-class, take the class with the highest prediction
-            predicted_class = np.argmax([sv[0].sum() for sv in shap_values])
-            shap_vals = shap_values[predicted_class][0]
+            # List format: [array for class 0, array for class 1, array for class 2]
+            # Get predicted class
+            if model is not None:
+                predicted_class = np.argmax(model.predict(X_sample)[0])
+            else:
+                # Fallback: use class with highest sum of SHAP values
+                predicted_class = np.argmax([sv[0].sum() for sv in shap_values])
+
+            shap_vals = shap_values[predicted_class][0]  # Shape: (n_features,)
+            base_value = explainer.expected_value[predicted_class]
+
+        elif len(shap_values.shape) == 3:
+            # 3D array format: (n_samples, n_features, n_classes)
+            # Get predicted class
+            if model is not None:
+                predicted_class = np.argmax(model.predict(X_sample)[0])
+            else:
+                # Fallback: use class with highest sum of SHAP values
+                predicted_class = np.argmax(shap_values[0].sum(axis=0))
+
+            shap_vals = shap_values[0, :, predicted_class]  # Shape: (n_features,)
+            base_value = explainer.expected_value[predicted_class]
+
         else:
-            shap_vals = shap_values[0]
+            # Binary classification or already 1D
+            if len(shap_values.shape) == 2:
+                shap_vals = shap_values[0]  # Shape: (n_features,)
+            else:
+                shap_vals = shap_values
+
+            base_value = explainer.expected_value if np.isscalar(explainer.expected_value) else \
+            explainer.expected_value[0]
 
         # Create feature importance dictionary
         feature_importance = {
@@ -214,8 +266,7 @@ def create_explanation_function(explainer, feature_names):
                 }
                 for feature, shap_val in top_features
             ],
-            'base_value': float(explainer.expected_value[0] if isinstance(explainer.expected_value, (list,
-                                                                                                     np.ndarray)) else explainer.expected_value)
+            'base_value': float(base_value)
         }
 
         return explanation
@@ -223,8 +274,8 @@ def create_explanation_function(explainer, feature_names):
     return explain_prediction
 
 
-def save_explainer_artifacts(risk_explainer, fraud_explainer, risk_explain_fn, fraud_explain_fn):
-    """Save SHAP explainers and utility functions"""
+def save_explainer_artifacts(risk_explainer, fraud_explainer):
+    """Save SHAP explainers (functions will be recreated on load)"""
     print("\nSaving SHAP explainer artifacts...")
 
     # Save explainers
@@ -236,15 +287,6 @@ def save_explainer_artifacts(risk_explainer, fraud_explainer, risk_explain_fn, f
     joblib.dump(fraud_explainer, fraud_explainer_path)
     print(f"✓ Fraud SHAP explainer saved to {fraud_explainer_path}")
 
-    # Save explanation functions
-    risk_fn_path = f'{MODEL_OUTPUT_DIR}/risk_explain_function.pkl'
-    joblib.dump(risk_explain_fn, risk_fn_path)
-    print(f"✓ Risk explanation function saved to {risk_fn_path}")
-
-    fraud_fn_path = f'{MODEL_OUTPUT_DIR}/fraud_explain_function.pkl'
-    joblib.dump(fraud_explain_fn, fraud_fn_path)
-    print(f"✓ Fraud explanation function saved to {fraud_fn_path}")
-
     # Save metadata
     metadata = {
         'creation_date': datetime.now().isoformat(),
@@ -254,14 +296,14 @@ def save_explainer_artifacts(risk_explainer, fraud_explainer, risk_explain_fn, f
         'usage': {
             'risk': 'Explains why a transaction was classified as low/medium/high risk',
             'fraud': 'Explains why a transaction was flagged as potentially fraudulent'
-        }
+        },
+        'note': 'Explanation functions should be recreated using create_explanation_function() when loading' # not picklable error
     }
 
     metadata_path = f'{METADATA_DIR}/shap_metadata.json'
     with open(metadata_path, 'w') as f:
         json.dump(metadata, f, indent=2)
     print(f"✓ SHAP metadata saved to {metadata_path}")
-
 
 def main():
     """Main execution function"""
@@ -329,8 +371,8 @@ def main():
 
     # Create explanation functions
     print("\nCreating explanation functions...")
-    risk_explain_fn = create_explanation_function(risk_explainer, risk_features)
-    fraud_explain_fn = create_explanation_function(fraud_explainer, fraud_features)
+    risk_explain_fn = create_explanation_function(risk_explainer, risk_features, risk_model)
+    fraud_explain_fn = create_explanation_function(fraud_explainer, fraud_features, fraud_model)
     print("✓ Explanation functions created")
 
     # Test explanation functions
@@ -351,7 +393,7 @@ def main():
         print(f"    - {feat['feature']}: {feat['shap_value']:.4f} ({feat['contribution']})")
 
     # Save artifacts
-    save_explainer_artifacts(risk_explainer, fraud_explainer, risk_explain_fn, fraud_explain_fn)
+    save_explainer_artifacts(risk_explainer, fraud_explainer)
 
     print("\n" + "=" * 70)
     print("SHAP EXPLAINER TRAINING COMPLETE")

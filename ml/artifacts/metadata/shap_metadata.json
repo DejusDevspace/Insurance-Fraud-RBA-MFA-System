@@ -1,0 +1,14 @@
+{
+  "creation_date": "2025-11-25T07:32:02.128119",
+  "shap_version": "0.50.0",
+  "explainer_type": "TreeExplainer",
+  "models": [
+    "risk_model",
+    "fraud_classifier"
+  ],
+  "usage": {
+    "risk": "Explains why a transaction was classified as low/medium/high risk",
+    "fraud": "Explains why a transaction was flagged as potentially fraudulent"
+  },
+  "note": "Explanation functions should be recreated using create_explanation_function() when loading"
+}
