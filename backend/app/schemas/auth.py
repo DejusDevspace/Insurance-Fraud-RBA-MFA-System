@@ -44,7 +44,7 @@ class RegisterRequest(BaseModel):
     country: str = "USA"
 
     # Policy
-    policy_type: Optional[str] = Field(None, regex="^(auto|home|health|life)$")
+    policy_type: Optional[str] = Field(None, pattern="^(auto|home|health|life)$")
 
 
 class RegisterResponse(BaseModel):

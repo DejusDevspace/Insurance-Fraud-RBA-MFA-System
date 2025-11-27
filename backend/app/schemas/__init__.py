@@ -30,12 +30,12 @@ from app.schemas.risk import (
 from app.schemas.fraud import (
     FraudDetectionResponse,
     FraudExplanationResponse,
-    ShapFeature
+    ShapFeature,
+    FraudAlertResponse,
 )
 from app.schemas.admin import (
     DashboardStatsResponse,
     RiskDistributionResponse,
-    FraudAlertResponse,
     UserRiskProfileResponse
 )
 

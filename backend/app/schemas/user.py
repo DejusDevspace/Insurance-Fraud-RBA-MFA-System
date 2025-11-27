@@ -1,8 +1,3 @@
-"""
-User Schemas
-Pydantic models for user-related API operations
-"""
-
 from pydantic import BaseModel, EmailStr, Field, validator, field_validator
 from typing import Optional
 from datetime import date, datetime
@@ -30,7 +25,7 @@ class UserCreate(UserBase):
     postal_code: Optional[str] = None
 
     # Policy information (optional during registration)
-    policy_type: Optional[str] = Field(None, regex="^(auto|home|health|life)$")
+    policy_type: Optional[str] = Field(None, pattern="^(auto|home|health|life)$")
 
     @field_validator('password')
     def password_strength(cls, v):

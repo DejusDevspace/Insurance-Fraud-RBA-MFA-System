@@ -7,7 +7,7 @@ from decimal import Decimal
 
 class ClaimBase(BaseModel):
     """Base claim schema"""
-    claim_type: str = Field(..., regex="^(accident|theft|medical|property_damage|other)$")
+    claim_type: str = Field(..., pattern="^(accident|theft|medical|property_damage|other)$")
     claim_amount: Decimal = Field(..., gt=0, le=1_000_000)
     incident_date: date
     claim_description: str = Field(..., min_length=10, max_length=2000)
@@ -100,8 +100,8 @@ class ClaimDetailResponse(BaseModel):
 
 class ClaimUpdate(BaseModel):
     """Schema for updating claim (admin only)"""
-    claim_status: Optional[str] = Field(None, regex="^(pending|approved|rejected|under_review)$")
-    approval_status: Optional[str] = Field(None, regex="^(approved|rejected|flagged)$")
+    claim_status: Optional[str] = Field(None, pattern="^(pending|approved|rejected|under_review)$")
+    approval_status: Optional[str] = Field(None, pattern="^(approved|rejected|flagged)$")
     rejection_reason: Optional[str] = None
     approved_amount: Optional[Decimal] = None
 
