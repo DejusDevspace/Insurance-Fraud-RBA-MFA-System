@@ -1,8 +1,3 @@
-"""
-Fraud Service
-Handles fraud detection and analysis
-"""
-
 from sqlalchemy.orm import Session
 from typing import Dict
 from datetime import datetime
