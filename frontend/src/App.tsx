@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import AdminRoute from "./components/auth/AdminRoute";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
@@ -8,6 +9,7 @@ import DashboardPage from "./pages/user/DashboardPage";
 import SubmitClaimPage from "./pages/user/SubmitClaimPage";
 import ClaimsHistoryPage from "./pages/user/ClaimsHistoryPage";
 import ClaimDetailsPage from "./pages/user/ClaimDetailsPage";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 
 function App() {
     return (
@@ -22,25 +24,25 @@ function App() {
                         <Route
                             path="/dashboard"
                             element={
-                                // <ProtectedRoute>
-                                <DashboardPage />
-                                // </ProtectedRoute>
+                                <ProtectedRoute>
+                                    <DashboardPage />
+                                </ProtectedRoute>
                             }
                         />
                         <Route
                             path="/claims/submit"
                             element={
-                                // <ProtectedRoute>
-                                <SubmitClaimPage />
-                                // </ProtectedRoute>
+                                <ProtectedRoute>
+                                    <SubmitClaimPage />
+                                </ProtectedRoute>
                             }
                         />
                         <Route
                             path="/claims/history"
                             element={
-                                // <ProtectedRoute>
-                                <ClaimsHistoryPage />
-                                // </ProtectedRoute>
+                                <ProtectedRoute>
+                                    <ClaimsHistoryPage />
+                                </ProtectedRoute>
                             }
                         />
                         <Route
@@ -49,6 +51,16 @@ function App() {
                                 <ProtectedRoute>
                                     <ClaimDetailsPage />
                                 </ProtectedRoute>
+                            }
+                        />
+
+                        {/* Admin Routes */}
+                        <Route
+                            path="/admin/dashboard"
+                            element={
+                                <AdminRoute>
+                                    <AdminDashboardPage />
+                                </AdminRoute>
                             }
                         />
 
