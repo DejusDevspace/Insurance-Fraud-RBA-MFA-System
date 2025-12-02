@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
+import datetime as dt
+from datetime import datetime
 
 from app.database import get_db
 from app.schemas.claim import (
@@ -59,6 +61,11 @@ def submit_claim(
         import hashlib
         device_fingerprint = hashlib.md5(f"{user_agent}-{client_ip}".encode()).hexdigest()
 
+        # Get transaction timing
+        now = datetime.now(dt.UTC)
+        transaction_hour = now.hour
+        transaction_day = now.weekday()
+
         # Build context data
         context_data = {
             'ip_address': client_ip,
@@ -81,8 +88,8 @@ def submit_claim(
             'pages_visited': 5,
             'form_fill_time': 300,  # Would be tracked by frontend
             'is_unusual_time': False,
-            'transaction_hour': None,  # Will be set by ClaimService
-            'transaction_day_of_week': None  # Will be set by ClaimService
+            'transaction_hour': transaction_hour,  # Will be set by ClaimService
+            'transaction_day_of_week': transaction_day  # Will be set by ClaimService
         }
 
         # Submit claim through service

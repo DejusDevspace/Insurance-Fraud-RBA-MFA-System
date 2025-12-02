@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import Dict, List, Optional, Tuple
 import datetime as dt
-from datetime import datetime
+from datetime import datetime, timedelta
 import uuid
 import logging
 
@@ -178,8 +178,8 @@ class ClaimService:
 
         # Calculate transaction timing
         now = datetime.now(dt.UTC)
-        transaction_hour = now.hour
-        transaction_day = now.weekday()
+        transaction_hour = context_data.get('transaction_hour', now.hour)
+        transaction_day = context_data.get('transaction_day_of_week', now.weekday())
         is_unusual_time = (transaction_hour < 6 or transaction_hour > 22)
 
         # Get user's recent claims for pattern analysis
@@ -195,7 +195,6 @@ class ClaimService:
             days_since_last = (now - last_claim.submitted_at).days
 
         # Count recent claims
-        from datetime import timedelta
         thirty_days_ago = now - timedelta(days=30)
         ninety_days_ago = now - timedelta(days=90)
 

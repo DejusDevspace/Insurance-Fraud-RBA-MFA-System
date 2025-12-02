@@ -176,10 +176,10 @@ class AuthService:
 
     @staticmethod
     def authenticate_user(
-            email: str,
-            password: str,
-            db: Session,
-            ip_address: Optional[str] = None
+        email: str,
+        password: str,
+        db: Session,
+        ip_address: Optional[str] = None
     ) -> Tuple[Optional[User], Optional[str], Optional[str]]:
         """
         Authenticate user with email and password
