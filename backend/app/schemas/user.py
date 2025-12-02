@@ -73,6 +73,7 @@ class UserResponse(BaseModel):
     # Account
     account_status: str
     is_verified: bool
+    is_admin: bool
     account_created_at: datetime
 
     class Config:
