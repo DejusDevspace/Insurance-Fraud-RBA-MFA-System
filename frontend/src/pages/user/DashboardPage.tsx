@@ -13,8 +13,7 @@ import {
     Clock,
     CheckCircle,
     AlertTriangle,
-    // Plus,
-    // TrendingUp,
+    Plus,
     DollarSign,
 } from "lucide-react";
 import type { Claim } from "../../types/claim.types";
@@ -205,7 +204,7 @@ const DashboardPage: React.FC = () => {
                         variant="primary"
                         size="lg"
                         onClick={() => navigate("/claims/submit")}
-                        // icon={<Plus className="w-5 h-5" />}
+                        icon={<Plus className="w-5 h-5" />}
                     >
                         Submit New Claim
                     </Button>
@@ -268,7 +267,7 @@ const DashboardPage: React.FC = () => {
                             <Button
                                 variant="primary"
                                 onClick={() => navigate("/claims/submit")}
-                                // icon={<Plus className="w-5 h-5" />}
+                                icon={<Plus className="w-5 h-5" />}
                             >
                                 Submit Your First Claim
                             </Button>

@@ -322,11 +322,10 @@ const SubmitClaimPage: React.FC = () => {
                                 type="submit"
                                 variant="primary"
                                 isLoading={loading}
-                                // icon={<CheckCircle className="w-5 h-5" />}
-                                className="flex-1 gap-2"
+                                icon={<CheckCircle className="w-5 h-5" />}
+                                className="flex-1"
                             >
                                 Submit Claim
-                                <CheckCircle className="w-5 h-5" />
                             </Button>
                         </div>
                     </form>

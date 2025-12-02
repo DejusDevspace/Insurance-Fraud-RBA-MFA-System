@@ -104,10 +104,9 @@ const Navbar: React.FC = () => {
                             variant="secondary"
                             size="sm"
                             onClick={handleLogout}
-                            className="flex gap-2"
+                            icon={<LogOut className="w-4 h-4" />}
                         >
                             Logout
-                            <LogOut className="w-4 h-4" />
                         </Button>
                     </div>
 
