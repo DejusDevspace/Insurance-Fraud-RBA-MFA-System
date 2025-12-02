@@ -6,6 +6,8 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import DashboardPage from "./pages/user/DashboardPage";
 import SubmitClaimPage from "./pages/user/SubmitClaimPage";
+import ClaimsHistoryPage from "./pages/user/ClaimsHistoryPage";
+import ClaimDetailsPage from "./pages/user/ClaimDetailsPage";
 
 function App() {
     return (
@@ -31,6 +33,22 @@ function App() {
                                 // <ProtectedRoute>
                                 <SubmitClaimPage />
                                 // </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/claims/history"
+                            element={
+                                // <ProtectedRoute>
+                                <ClaimsHistoryPage />
+                                // </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/claims/:claimId"
+                            element={
+                                <ProtectedRoute>
+                                    <ClaimDetailsPage />
+                                </ProtectedRoute>
                             }
                         />
 
