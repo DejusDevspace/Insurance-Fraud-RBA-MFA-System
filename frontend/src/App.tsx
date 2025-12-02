@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
-import "./App.css";
+import DashboardPage from "./pages/user/DashboardPage";
 
 function App() {
     return (
@@ -13,6 +14,16 @@ function App() {
                     <Routes>
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/register" element={<RegisterPage />} />
+
+                        {/* Protected User Routes */}
+                        <Route
+                            path="/dashboard"
+                            element={
+                                // <ProtectedRoute>
+                                <DashboardPage />
+                                // </ProtectedRoute>
+                            }
+                        />
 
                         {/* Redirects */}
                         <Route
