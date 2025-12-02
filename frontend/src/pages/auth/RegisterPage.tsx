@@ -7,12 +7,12 @@ import { Button } from "../../components/common/Button";
 import { Select } from "../../components/common/Select";
 import {
     Shield,
-    // Mail,
-    // Lock,
-    // User,
-    // Phone,
-    // MapPin,
-    // CreditCard,
+    Mail,
+    Lock,
+    User,
+    Phone,
+    MapPin,
+    CreditCard,
 } from "lucide-react";
 
 const RegisterPage: React.FC = () => {
@@ -134,7 +134,7 @@ const RegisterPage: React.FC = () => {
                                         )
                                     }
                                     placeholder="John"
-                                    // icon={<User className="w-5 h-5" />}
+                                    icon={<User className="w-5 h-5" />}
                                     disabled={loading}
                                     required
                                 />
@@ -149,7 +149,7 @@ const RegisterPage: React.FC = () => {
                                         )
                                     }
                                     placeholder="Doe"
-                                    // icon={<User className="w-5 h-5" />}
+                                    icon={<User className="w-5 h-5" />}
                                     disabled={loading}
                                     required
                                 />
@@ -170,7 +170,7 @@ const RegisterPage: React.FC = () => {
                                         handleChange("email", e.target.value)
                                     }
                                     placeholder="your.email@example.com"
-                                    // icon={<Mail className="w-5 h-5" />}
+                                    icon={<Mail className="w-5 h-5" />}
                                     disabled={loading}
                                     required
                                 />
@@ -185,7 +185,7 @@ const RegisterPage: React.FC = () => {
                                         )
                                     }
                                     placeholder="+234 800 000 0000"
-                                    // icon={<Phone className="w-5 h-5" />}
+                                    icon={<Phone className="w-5 h-5" />}
                                     disabled={loading}
                                 />
                             </div>
@@ -205,7 +205,7 @@ const RegisterPage: React.FC = () => {
                                         handleChange("address", e.target.value)
                                     }
                                     placeholder="123 Main Street"
-                                    // icon={<MapPin className="w-5 h-5" />}
+                                    icon={<MapPin className="w-5 h-5" />}
                                     disabled={loading}
                                 />
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -275,7 +275,7 @@ const RegisterPage: React.FC = () => {
                                 onChange={(e) =>
                                     handleChange("policy_type", e.target.value)
                                 }
-                                // icon={<CreditCard className="w-5 h-5" />}
+                                icon={<CreditCard className="w-5 h-5" />}
                                 disabled={loading}
                                 options={[
                                     { value: "auto", label: "Auto Insurance" },
@@ -308,7 +308,7 @@ const RegisterPage: React.FC = () => {
                                         handleChange("password", e.target.value)
                                     }
                                     placeholder="Min. 8 characters"
-                                    // icon={<Lock className="w-5 h-5" />}
+                                    icon={<Lock className="w-5 h-5" />}
                                     disabled={loading}
                                     required
                                 />
@@ -323,7 +323,7 @@ const RegisterPage: React.FC = () => {
                                         )
                                     }
                                     placeholder="Re-enter password"
-                                    // icon={<Lock className="w-5 h-5" />}
+                                    icon={<Lock className="w-5 h-5" />}
                                     disabled={loading}
                                     required
                                 />

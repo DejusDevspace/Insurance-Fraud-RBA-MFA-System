@@ -4,7 +4,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useNotification } from "../../hooks/useNotification";
 import { Input } from "../../components/common/Input";
 import { Button } from "../../components/common/Button";
-import { Shield } from "lucide-react";
+import { Shield, Mail, Lock } from "lucide-react";
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -76,7 +76,7 @@ const LoginPage: React.FC = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="your.email@example.com"
-                            // icon={<Mail className="w-5 h-5" />}
+                            icon={<Mail className="w-5 h-5" />}
                             disabled={loading}
                             required
                         />
@@ -87,7 +87,7 @@ const LoginPage: React.FC = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="Enter your password"
-                            // icon={<Lock className="w-5 h-5" />}
+                            icon={<Lock className="w-5 h-5" />}
                             disabled={loading}
                             required
                         />
