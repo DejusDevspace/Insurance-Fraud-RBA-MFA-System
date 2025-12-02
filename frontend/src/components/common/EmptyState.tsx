@@ -4,10 +4,12 @@ interface EmptyStateProps {
     icon?: React.ReactNode;
     title: string;
     description: string;
-    action?: {
-        label: string;
-        onClick: () => void;
-    };
+    action?:
+        | {
+              label: string;
+              onClick: () => void;
+          }
+        | React.ReactNode;
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
@@ -27,11 +29,14 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
             <p className="text-muted text-center max-w-md mb-6">
                 {description}
             </p>
-            {action && (
-                <button onClick={action.onClick} className="btn-primary">
-                    {action.label}
-                </button>
-            )}
+            {action &&
+                (typeof action === "object" && "label" in action ? (
+                    <button onClick={action.onClick} className="btn-primary">
+                        {action.label}
+                    </button>
+                ) : (
+                    action
+                ))}
         </div>
     );
 };
