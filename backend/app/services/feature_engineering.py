@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import datetime as dt
 from datetime import datetime, timedelta
 from typing import Dict, Any
 from sqlalchemy.orm import Session
@@ -51,11 +52,11 @@ class FeatureEngineeringService:
         user_claims = db.query(Claim).filter(Claim.user_id == user.user_id).all()
 
         # Claims in last 30 days
-        thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+        thirty_days_ago = datetime.now(dt.UTC) - timedelta(days=30)
         claims_last_30 = len([c for c in user_claims if c.submitted_at >= thirty_days_ago])
 
         # Claims in last 90 days
-        ninety_days_ago = datetime.utcnow() - timedelta(days=90)
+        ninety_days_ago = datetime.now(dt.UTC) - timedelta(days=90)
         claims_last_90 = len([c for c in user_claims if c.submitted_at >= ninety_days_ago])
 
         features['claims_last_30_days'] = claims_last_30
@@ -70,7 +71,7 @@ class FeatureEngineeringService:
             sorted_claims = sorted(user_claims, key=lambda c: c.submitted_at, reverse=True)
             if len(sorted_claims) > 0:
                 last_claim = sorted_claims[0]
-                days_since_last = (datetime.utcnow() - last_claim.submitted_at).days
+                days_since_last = (datetime.now(dt.UTC) - last_claim.submitted_at).days
             else:
                 days_since_last = 999
         else:
@@ -103,8 +104,8 @@ class FeatureEngineeringService:
         features['device_risk_score'] = 1.0 - device_trust_score
 
         # -- Time features
-        transaction_hour = context_data.get('transaction_hour', datetime.utcnow().hour)
-        transaction_day = context_data.get('transaction_day_of_week', datetime.utcnow().weekday())
+        transaction_hour = context_data.get('transaction_hour', datetime.now(dt.UTC).hour)
+        transaction_day = context_data.get('transaction_day_of_week', datetime.now(dt.UTC).weekday())
         is_unusual_time = context_data.get('is_unusual_time', False)
 
         features['transaction_hour'] = transaction_hour
@@ -208,7 +209,7 @@ class FeatureEngineeringService:
         if user_claims:
             sorted_claims = sorted(user_claims, key=lambda c: c.submitted_at, reverse=True)
             if len(sorted_claims) > 0:
-                days_since_last = (datetime.utcnow() - sorted_claims[0].submitted_at).days
+                days_since_last = (datetime.now(dt.UTC) - sorted_claims[0].submitted_at).days
             else:
                 days_since_last = 999
         else:
@@ -219,8 +220,8 @@ class FeatureEngineeringService:
         features['is_very_rapid'] = 1 if days_since_last < 3 else 0
 
         # Claim frequency
-        thirty_days_ago = datetime.utcnow() - timedelta(days=30)
-        ninety_days_ago = datetime.utcnow() - timedelta(days=90)
+        thirty_days_ago = datetime.now(dt.UTC) - timedelta(days=30)
+        ninety_days_ago = datetime.now(dt.UTC) - timedelta(days=90)
 
         claims_last_30 = len([c for c in user_claims if c.submitted_at >= thirty_days_ago])
         claims_last_90 = len([c for c in user_claims if c.submitted_at >= ninety_days_ago])
@@ -291,8 +292,8 @@ class FeatureEngineeringService:
         features['is_suspicious_session'] = 1 if (form_fill_time < 120 or form_fill_time > 1200) else 0
 
         # -- Time features
-        transaction_hour = context_data.get('transaction_hour', datetime.utcnow().hour)
-        transaction_day = context_data.get('transaction_day_of_week', datetime.utcnow().weekday())
+        transaction_hour = context_data.get('transaction_hour', datetime.now(dt.UTC).hour)
+        transaction_day = context_data.get('transaction_day_of_week', datetime.now(dt.UTC).weekday())
 
         features['transaction_hour'] = transaction_hour
         features['transaction_day_of_week'] = transaction_day
