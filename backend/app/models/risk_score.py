@@ -31,7 +31,7 @@ class RiskScore(Base):
     calculation_method = Column(String(50))  # rule_based, ml_enhanced
 
     # Timestamp
-    calculated_at = Column(DateTime, default=lambda: datetime.now(dt.UTC), nullable=False)
+    calculated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), nullable=False)
 
     # Relationships
     claim = relationship("Claim", back_populates="risk_scores")

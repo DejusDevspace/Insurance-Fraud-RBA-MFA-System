@@ -27,12 +27,12 @@ class Device(Base):
     # Trust Level
     is_trusted = Column(Boolean, default=False, nullable=False)
     device_trust_score = Column(Numeric(3, 2), default=0.5)  # 0.00 to 1.00
-    first_seen_at = Column(DateTime, default=lambda: datetime.now(dt.UTC), nullable=False)
-    last_seen_at = Column(DateTime, default=lambda: datetime.now(dt.UTC), nullable=False)
+    first_seen_at = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), nullable=False)
+    last_seen_at = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), nullable=False)
     usage_count = Column(Integer, default=1, nullable=False)
 
     # Timestamps
-    created_at = Column(DateTime, default=lambda: datetime.now(dt.UTC), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), nullable=False)
 
     # Relationships
     user = relationship("User", back_populates="devices")

@@ -33,7 +33,7 @@ class AuditLog(Base):
     user_agent = Column(Text)
 
     # Timestamp
-    timestamp = Column(DateTime, default=lambda: datetime.now(dt.UTC), nullable=False, index=True)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), nullable=False, index=True)
 
     # Relationships
     user = relationship("User")

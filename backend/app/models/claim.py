@@ -27,8 +27,8 @@ class Claim(Base):
 
     # Status Tracking
     claim_status = Column(String(20), default="pending", nullable=False)  # pending, approved, rejected, under_review
-    submitted_at = Column(DateTime, default=lambda: datetime.now(dt.UTC), nullable=False, index=True)
-    processed_at = Column(DateTime)
+    submitted_at = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), nullable=False, index=True)
+    processed_at = Column(DateTime(timezone=True))
 
     # Fraud Indicators (Ground Truth - for evaluation/training)
     is_fraudulent = Column(Boolean, default=False, nullable=False, index=True)
@@ -41,8 +41,8 @@ class Claim(Base):
     approved_amount = Column(Numeric(12, 2))
 
     # Timestamps
-    created_at = Column(DateTime, default=lambda: datetime.now(dt.UTC), nullable=False)
-    updated_at = Column(DateTime, default=lambda: datetime.now(dt.UTC), onupdate=lambda: datetime.now(dt.UTC), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), nullable=False)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), onupdate=lambda: datetime.now(dt.UTC), nullable=False)
 
     # Relationships
     user = relationship("User", back_populates="claims")

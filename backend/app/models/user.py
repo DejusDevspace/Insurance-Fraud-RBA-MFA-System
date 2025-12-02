@@ -32,8 +32,8 @@ class User(Base):
     postal_code = Column(String(20))
 
     # Account Metadata
-    account_created_at = Column(DateTime, default=lambda: datetime.now(dt.UTC), nullable=False)
-    last_login_at = Column(DateTime)
+    account_created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.timezone.utc), nullable=False)
+    last_login_at = Column(DateTime(timezone=True))
     account_status = Column(String(20), default="active", nullable=False)  # active, suspended, closed
     is_verified = Column(Boolean, default=False, nullable=False)
     is_admin = Column(Boolean, default=False, nullable=False)
@@ -53,8 +53,8 @@ class User(Base):
     fraud_flags_count = Column(Integer, default=0, nullable=False)
 
     # Timestamps
-    created_at = Column(DateTime, default=lambda: datetime.now(dt.UTC), nullable=False)
-    updated_at = Column(DateTime, default=lambda: datetime.now(dt.UTC), onupdate=lambda: datetime.now(dt.UTC), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), nullable=False)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), onupdate=lambda: datetime.now(dt.UTC), nullable=False)
 
     # Relationships
     claims = relationship("Claim", back_populates="user", cascade="all, delete-orphan")
@@ -72,4 +72,4 @@ class User(Base):
     @property
     def account_age_days(self):
         """Calculate account age in days"""
-        return (datetime.now(dt.UTC)- self.account_created_at).days
+        return (datetime.now(dt.UTC) - self.account_created_at).days

@@ -49,7 +49,7 @@ class TransactionContext(Base):
     device_trust_score = Column(Numeric(3, 2))
 
     # Timestamp
-    captured_at = Column(DateTime, default=lambda: datetime.now(dt.UTC), nullable=False)
+    captured_at = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), nullable=False)
 
     # Relationships
     claim = relationship("Claim", back_populates="transaction_context")

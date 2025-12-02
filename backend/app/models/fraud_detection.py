@@ -34,7 +34,7 @@ class FraudDetection(Base):
     # Example: [{"feature": "claim_amount_ratio", "importance": 0.85, "contribution": "increases"}, ...]
 
     # Timestamp
-    detected_at = Column(DateTime, default=lambda: datetime.now(dt.UTC), nullable=False)
+    detected_at = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), nullable=False)
 
     # Relationships
     claim = relationship("Claim", back_populates="fraud_detections")

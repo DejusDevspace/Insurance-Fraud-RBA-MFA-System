@@ -35,7 +35,7 @@ class AuthenticationEvent(Base):
     user_agent = Column(Text)
 
     # Timestamp
-    event_timestamp = Column(DateTime, default=lambda: datetime.now(dt.UTC), nullable=False, index=True)
+    event_timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(dt.UTC), nullable=False, index=True)
 
     # Relationships
     user = relationship("User", back_populates="authentication_events")
