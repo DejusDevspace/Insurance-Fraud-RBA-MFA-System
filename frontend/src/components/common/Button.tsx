@@ -8,6 +8,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     size?: "sm" | "md" | "lg";
     isLoading?: boolean;
     fullWidth?: boolean;
+    icon?: React.ReactNode;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -16,6 +17,7 @@ export const Button: React.FC<ButtonProps> = ({
     size = "md",
     isLoading = false,
     fullWidth = false,
+    icon,
     disabled,
     className,
     ...props
@@ -53,6 +55,7 @@ export const Button: React.FC<ButtonProps> = ({
         >
             {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             {children}
+            {icon && !isLoading && <span className="ml-2">{icon}</span>}
         </button>
     );
 };
