@@ -46,6 +46,10 @@ class FraudService:
             is_suspicious, fraud_probability, predicted_fraud_type, anomaly_score, model_used = \
                 self.fraud_predictor.detect_fraud(fraud_features)
 
+            # Convert numpy.float32 to native python float (fix)
+            fraud_probability = float(fraud_probability)
+            anomaly_score = float(anomaly_score)
+
             # Get confidence level
             confidence_level = self.fraud_predictor.get_confidence_level(fraud_probability)
 

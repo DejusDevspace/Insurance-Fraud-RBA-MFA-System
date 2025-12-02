@@ -41,6 +41,9 @@ class RiskService:
             # Predict risk
             risk_score, risk_level, risk_factors = self.risk_predictor.predict_risk(risk_features)
 
+            # Convert numpy.float32 to native python float (fix)
+            risk_score = float(risk_score)
+
             # Create risk score record
             risk_score_record = RiskScore(
                 claim_id=claim.claim_id,
