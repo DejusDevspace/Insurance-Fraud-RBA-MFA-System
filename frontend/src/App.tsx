@@ -5,6 +5,7 @@ import { NotificationProvider } from "./contexts/NotificationContext";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import DashboardPage from "./pages/user/DashboardPage";
+import SubmitClaimPage from "./pages/user/SubmitClaimPage";
 
 function App() {
     return (
@@ -21,6 +22,14 @@ function App() {
                             element={
                                 // <ProtectedRoute>
                                 <DashboardPage />
+                                // </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/claims/submit"
+                            element={
+                                // <ProtectedRoute>
+                                <SubmitClaimPage />
                                 // </ProtectedRoute>
                             }
                         />
