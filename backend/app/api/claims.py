@@ -78,18 +78,18 @@ def submit_claim(
             'geolocation_distance_km': 0,  # Distance from user's typical location
             'device': {
                 'fingerprint': device_fingerprint,
-                'type': 'desktop',  # Would be detected from user agent
+                'type': 'desktop',  # TODO: Would be detected from user agent
                 'os': 'Unknown',
                 'browser': 'Unknown'
             },
             'device_trust_score': 0.5,
             'is_trusted_device': False,
-            'session_duration': 600,  # Would be tracked in session
+            'session_duration': 600,  # TODO: Would be tracked in session (frontend)
             'pages_visited': 5,
-            'form_fill_time': 300,  # Would be tracked by frontend
+            'form_fill_time': 300,  # TODO: Would be tracked by frontend
             'is_unusual_time': False,
-            'transaction_hour': transaction_hour,  # Will be set by ClaimService
-            'transaction_day_of_week': transaction_day  # Will be set by ClaimService
+            'transaction_hour': transaction_hour,
+            'transaction_day_of_week': transaction_day
         }
 
         # Submit claim through service
