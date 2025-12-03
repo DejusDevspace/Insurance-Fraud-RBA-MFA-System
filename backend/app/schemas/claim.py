@@ -8,7 +8,7 @@ from decimal import Decimal
 class ClaimBase(BaseModel):
     """Base claim schema"""
     claim_type: str = Field(..., pattern="^(accident|theft|medical|property_damage|other)$")
-    claim_amount: Decimal = Field(..., gt=0, le=1_000_000)
+    claim_amount: Decimal = Field(..., gt=0, le=3_000_000)
     incident_date: date
     claim_description: str = Field(..., min_length=10, max_length=2000)
     supporting_documents_count: int = Field(default=0, ge=0, le=10)
@@ -90,9 +90,9 @@ class ClaimDetailResponse(BaseModel):
     approved_amount: Optional[float]
 
     # Risk and fraud
-    risk_level: Optional[str]
-    fraud_probability: Optional[float]
-    is_suspicious: Optional[bool]
+    risk_level: Optional[str] = None
+    fraud_probability: Optional[float] = None
+    is_suspicious: Optional[bool] = None
 
     class Config:
         from_attributes = True
