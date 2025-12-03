@@ -47,5 +47,9 @@ class Device(Base):
 
         # Increase trust score based on usage
         if self.usage_count > 5 and not self.is_trusted:
+            # Ensure we operate on native Python floats to avoid Decimal/float type errors(fix)
+            current_score = float(self.device_trust_score or 0.5)
+            new_score = min(0.95, current_score + 0.2)
+
             self.is_trusted = True
-            self.device_trust_score = min(0.95, self.device_trust_score + 0.2)
+            self.device_trust_score = new_score
