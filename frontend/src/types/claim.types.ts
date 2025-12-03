@@ -32,6 +32,7 @@ export interface Claim {
     approval_status?: string;
     rejection_reason?: string;
     approved_amount?: number;
+    supporting_documents_count?: number;
 }
 
 export interface ClaimSubmissionResponse {
