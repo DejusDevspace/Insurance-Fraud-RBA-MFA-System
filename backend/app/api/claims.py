@@ -77,15 +77,15 @@ def submit_claim(
             'is_geolocation_anomaly': False,  # Would be calculated based on user's typical location
             'geolocation_distance_km': 0,  # Distance from user's typical location
             'device': {
-                'fingerprint': device_fingerprint,
+                'fingerprint': device_fingerprint,  # TODO: How to get fingerprint and save in db
                 'type': 'desktop',  # TODO: Would be detected from user agent
-                'os': 'Unknown',
-                'browser': 'Unknown'
+                'os': 'Unknown',  # TODO: From user agent?
+                'browser': 'Unknown'  # TODO: From user agent?
             },
             'device_trust_score': 0.5,
             'is_trusted_device': False,
             'session_duration': 600,  # TODO: Would be tracked in session (frontend)
-            'pages_visited': 5,
+            'pages_visited': 5,  # TODO: Should be tracked by frontend
             'form_fill_time': 300,  # TODO: Would be tracked by frontend
             'is_unusual_time': False,
             'transaction_hour': transaction_hour,

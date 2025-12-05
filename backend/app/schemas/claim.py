@@ -32,6 +32,8 @@ class ClaimBase(BaseModel):
 
 class ClaimCreate(ClaimBase):
     """Schema for creating a new claim"""
+    # TODO: Add more params to be sent from frontend
+    # (pages visited, form fill time, session duration)
     pass
 
 
