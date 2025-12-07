@@ -39,7 +39,7 @@ const DashboardPage: React.FC = () => {
 
     const fetchClaims = async () => {
         try {
-            const data = await claimService.getUserClaims(10, 0);
+            const data = await claimService.getUserClaims(20, 0);
             setClaims(data);
             calculateStats(data);
         } catch (error: any) {
