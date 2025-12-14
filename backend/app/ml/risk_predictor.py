@@ -41,6 +41,7 @@ class RiskPredictor:
 
             # Get model prediction
             risk_probabilities = self.model.predict_proba(feature_vector_scaled)[0]
+            # print("RISK PROBS:", risk_probabilities)
 
             # Calculate weighted risk score (0 to 1)
             # For multi-class: weight by class probabilities

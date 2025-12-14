@@ -35,6 +35,7 @@ class FraudPredictor:
                      anomaly_score, model_used)
         """
         try:
+            # print("FEATURES:", features)
             # Extract and scale features
             feature_vector = self._extract_feature_vector(features)
             feature_vector_scaled = self.scaler.transform(feature_vector)
@@ -42,15 +43,18 @@ class FraudPredictor:
             # Anomaly detection (Isolation Forest)
             anomaly_score = self.isolation_forest.decision_function(feature_vector_scaled)[0]
             is_anomaly = self.isolation_forest.predict(feature_vector_scaled)[0] == -1
+            # print("ANOMALY:", is_anomaly)
 
             # Supervised classification (XGBoost)
             fraud_probability = self.classifier.predict_proba(feature_vector_scaled)[0][1]
+            # print("PROBA:", fraud_probability)
 
             # Ensemble decision
             is_suspicious = (
-                    is_anomaly or
-                    fraud_probability > settings.FRAUD_PROBABILITY_THRESHOLD
+                is_anomaly or
+                fraud_probability > settings.FRAUD_PROBABILITY_THRESHOLD
             )
+            # print("SUSPECT?:", is_suspicious)
 
             # Detect fraud type if suspicious
             predicted_fraud_type = None
