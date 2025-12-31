@@ -122,6 +122,7 @@ class FeatureEngineeringService:
 
         features['session_duration_seconds'] = session_duration
         features['form_fill_time_minutes'] = form_fill_time / 60.0
+        # TODO: Probe rushed form logic. Proposing less than a minute
         features['is_rushed_form'] = 1 if form_fill_time < 180 else 0
         features['is_suspicious_session'] = 1 if (form_fill_time < 120 or form_fill_time > 1200) else 0
         features['pages_visited'] = pages_visited
