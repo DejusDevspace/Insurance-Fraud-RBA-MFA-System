@@ -21,6 +21,7 @@ from app.models.user import User
 router = APIRouter()
 
 
+# TODO: Ensure features are implemented correctly
 @router.post("/", response_model=ClaimSubmissionResponse, status_code=status.HTTP_201_CREATED)
 def submit_claim(
     claim_data: ClaimCreate,
