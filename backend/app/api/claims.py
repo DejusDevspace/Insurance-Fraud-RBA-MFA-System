@@ -22,6 +22,7 @@ router = APIRouter()
 
 
 # TODO: Ensure features are implemented correctly
+# PROBE: fingerprinting and session timing management (frontend vs backend)
 @router.post("/", response_model=ClaimSubmissionResponse, status_code=status.HTTP_201_CREATED)
 def submit_claim(
     claim_data: ClaimCreate,
