@@ -16,14 +16,14 @@ import RiskScoreDisplay from "../../components/risk/RiskScoreDisplay";
 import FraudAlert from "../../components/fraud/FraudAlert";
 import {
     FileText,
-    Calendar,
-    DollarSign,
+    // Calendar,
+    // DollarSign,
     AlertTriangle,
     CheckCircle,
     XCircle,
     ArrowLeft,
     Shield,
-    Info,
+    // Info,
 } from "lucide-react";
 import type { Claim } from "../../types/claim.types";
 import type { RiskScore } from "../../types/risk.types";

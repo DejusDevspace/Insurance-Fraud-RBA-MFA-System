@@ -14,6 +14,9 @@ export interface RiskScore {
 export interface RiskFactor {
     factor: string;
     score: number;
+    // Temp values for probe:
+    shap_value: number;
+    magnitude: number;
 }
 
 export interface RiskAssessment {
