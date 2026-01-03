@@ -1,7 +1,7 @@
 # Multi-stage build for Insurance Fraud Detection Frontend
 
 # Stage 1: Builder
-FROM node:22-alpine as builder
+FROM node:22-alpine AS builder
 
 WORKDIR /build
 
@@ -29,10 +29,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy built application from builder
 COPY --from=builder /build/dist /usr/share/nginx/html
 
-# Create non-root user
-RUN addgroup -g 1000 nginx && \
-    adduser -D -u 1000 -G nginx nginx && \
-    chown -R nginx:nginx /usr/share/nginx/html /var/cache/nginx /var/log/nginx /etc/nginx/conf.d
+# Fix permissions for nginx user (already exists in nginx:alpine)
+RUN chown -R nginx:nginx /usr/share/nginx/html /var/cache/nginx /var/log/nginx /etc/nginx/conf.d
 
 USER nginx
 
