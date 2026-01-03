@@ -1,0 +1,138 @@
+version: '3.9'
+
+services:
+  # PostgreSQL Database with production settings
+  postgres:
+    image: postgres:16-alpine
+    container_name: insurance-fraud-postgres-prod
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      # Production PostgreSQL settings
+      POSTGRES_INITDB_ARGS: "-c max_connections=200 -c shared_buffers=256MB -c effective_cache_size=1GB"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+      - postgres_backups:/backups
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fraud-detection-prod
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Backend Service with production settings
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: insurance-fraud-backend-prod
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: "False"
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      MODELS_PATH: ./models
+      OTP_EXPIRY_MINUTES: ${OTP_EXPIRY_MINUTES:-5}
+      OTP_LENGTH: ${OTP_LENGTH:-6}
+      RISK_LOW_THRESHOLD: ${RISK_LOW_THRESHOLD:-0.35}
+      RISK_HIGH_THRESHOLD: ${RISK_HIGH_THRESHOLD:-0.65}
+      FRAUD_PROBABILITY_THRESHOLD: ${FRAUD_PROBABILITY_THRESHOLD:-0.5}
+      FRAUD_HIGH_CONFIDENCE_THRESHOLD: ${FRAUD_HIGH_CONFIDENCE_THRESHOLD:-0.7}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend/models:/app/models:ro
+    networks:
+      - fraud-detection-prod
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+
+  # Frontend Service with production settings
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: insurance-fraud-frontend-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - VITE_API_BASE_URL=${API_BASE_URL}
+    depends_on:
+      - backend
+    networks:
+      - fraud-detection-prod
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+  # Optional: Backup service for database backups
+  backup:
+    image: postgres:16-alpine
+    container_name: insurance-fraud-backup
+    environment:
+      PGPASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_backups:/backups
+      - ./scripts/backup.sh:/backup.sh
+    entrypoint: /bin/sh -c "while true; do /backup.sh; sleep 86400; done"
+    depends_on:
+      - postgres
+    networks:
+      - fraud-detection-prod
+    restart: always
+
+networks:
+  fraud-detection-prod:
+    driver: bridge
+
+volumes:
+  postgres_data_prod:
+    driver: local
+  postgres_backups:
+    driver: local

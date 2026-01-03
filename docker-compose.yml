@@ -1,0 +1,89 @@
+version: '3.9'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: insurance-fraud-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-fraud_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-fraud_password}
+      POSTGRES_DB: ${DB_NAME:-insurance_fraud}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-fraud_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fraud-detection
+    restart: unless-stopped
+
+  # Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: insurance-fraud-backend
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-fraud_user}:${DB_PASSWORD:-fraud_password}@postgres:5432/${DB_NAME:-insurance_fraud}
+      SECRET_KEY: ${SECRET_KEY:-your-secret-key-change-in-production}
+      DEBUG: ${DEBUG:-True}
+      ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3000,http://frontend:80
+      MODELS_PATH: ./models
+      OTP_EXPIRY_MINUTES: 5
+      OTP_LENGTH: 6
+      RISK_LOW_THRESHOLD: 0.35
+      RISK_HIGH_THRESHOLD: 0.65
+      FRAUD_PROBABILITY_THRESHOLD: 0.5
+      FRAUD_HIGH_CONFIDENCE_THRESHOLD: 0.7
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/models:/app/models
+    networks:
+      - fraud-detection
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: insurance-fraud-frontend
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - fraud-detection
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+networks:
+  fraud-detection:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
