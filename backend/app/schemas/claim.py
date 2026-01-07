@@ -32,9 +32,9 @@ class ClaimBase(BaseModel):
 
 class ClaimCreate(ClaimBase):
     """Schema for creating a new claim"""
-    # TODO: Add more params to be sent from frontend
-    # (pages visited, form fill time, session duration)
-    pass
+    session_duration: int = Field(..., ge=0, description="Time in seconds from login to claim submission")
+    pages_visited: int = Field(..., ge=0, description="Number of pages visited during session")
+    form_fill_time: int = Field(..., ge=0, description="Time in milliseconds to fill the claim form")
 
 
 class ClaimResponse(BaseModel):
