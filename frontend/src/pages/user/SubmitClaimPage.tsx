@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../hooks/useNotification";
+import { useSessionTracking } from "../../hooks/useSessionTracking";
 import { claimService } from "../../services/claimService";
 import { Card } from "../../components/common/Card";
 import { Input } from "../../components/common/Input";
@@ -27,6 +28,7 @@ import type {
 const SubmitClaimPage: React.FC = () => {
     const navigate = useNavigate();
     const { showNotification } = useNotification();
+    const { session_duration, pages_visited } = useSessionTracking();
 
     const [formData, setFormData] = useState<ClaimSubmission>({
         claim_type: "accident",
@@ -34,8 +36,12 @@ const SubmitClaimPage: React.FC = () => {
         incident_date: "",
         claim_description: "",
         supporting_documents_count: 0,
+        session_duration: 0,
+        pages_visited: 0,
+        form_fill_time: 0,
     });
 
+    const formStartTimeRef = useRef<number>(Date.now());
     const [loading, setLoading] = useState(false);
     const [showMFAModal, setShowMFAModal] = useState(false);
     const [mfaMethod, setMfaMethod] = useState<"otp" | "biometric" | null>(
@@ -90,8 +96,23 @@ const SubmitClaimPage: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await claimService.submitClaim(formData);
+            // Calculate form fill time in seconds
+            const formFillTime = Math.floor((Date.now() - formStartTimeRef.current) / 1000);
+
+            // Prepare claim data with timing information
+            const claimDataWithTiming = {
+                ...formData,
+                form_fill_time: formFillTime,
+                session_duration,
+                pages_visited,
+            };
+
+            console.log("CLAIM DATA:", claimDataWithTiming);
+            const response = await claimService.submitClaim(
+                claimDataWithTiming
+            );
             setClaimResponse(response);
+            console.log("RESPONSE:", response);
 
             if (response.requires_mfa) {
                 // MFA required - show modal
@@ -142,6 +163,15 @@ const SubmitClaimPage: React.FC = () => {
         );
         navigate("/claims/history");
     };
+
+    // Update session data when tracking changes
+    useEffect(() => {
+        setFormData((prev) => ({
+            ...prev,
+            session_duration,
+            pages_visited,
+        }));
+    }, [session_duration, pages_visited]);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat("en-NG", {

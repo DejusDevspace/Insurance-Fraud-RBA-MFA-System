@@ -34,7 +34,7 @@ class ClaimCreate(ClaimBase):
     """Schema for creating a new claim"""
     session_duration: int = Field(..., ge=0, description="Time in seconds from login to claim submission")
     pages_visited: int = Field(..., ge=0, description="Number of pages visited during session")
-    form_fill_time: int = Field(..., ge=0, description="Time in milliseconds to fill the claim form")
+    form_fill_time: int = Field(..., ge=0, description="Time in seconds to fill the claim form")
 
 
 class ClaimResponse(BaseModel):

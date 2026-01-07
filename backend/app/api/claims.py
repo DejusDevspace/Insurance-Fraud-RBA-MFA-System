@@ -57,7 +57,9 @@ def submit_claim(
     try:
         # Get client information
         client_ip = request.client.host if request.client else None
-        user_agent = request.headers.get("user-agent", "")
+        user_agent = request.headers.get('user-agent', '')
+        print('----- USER AGENT: ', user_agent)
+        print('----- CLAIM SUB DATA: ', claim_data)
 
         # Simulate device fingerprint (in production, use proper fingerprinting library)
         import hashlib
@@ -86,9 +88,9 @@ def submit_claim(
             },
             'device_trust_score': 0.5,
             'is_trusted_device': False,
-            'session_duration': 600,  # TODO: Would be tracked in session (frontend)
-            'pages_visited': 5,  # TODO: Should be tracked by frontend
-            'form_fill_time': 300,  # TODO: Would be tracked by frontend
+            'session_duration': claim_data.session_duration,  # TODO: Would be tracked in session (frontend)
+            'pages_visited': claim_data.pages_visited,  # TODO: Should be tracked by frontend
+            'form_fill_time': claim_data.form_fill_time,  # TODO: Would be tracked by frontend
             'is_unusual_time': False,
             'transaction_hour': transaction_hour,
             'transaction_day_of_week': transaction_day

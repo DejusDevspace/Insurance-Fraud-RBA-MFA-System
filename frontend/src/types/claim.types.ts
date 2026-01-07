@@ -12,6 +12,9 @@ export interface ClaimSubmission {
     incident_date: string;
     claim_description: string;
     supporting_documents_count?: number;
+    session_duration: number;
+    pages_visited: number;
+    form_fill_time: number;
 }
 
 export interface Claim {
