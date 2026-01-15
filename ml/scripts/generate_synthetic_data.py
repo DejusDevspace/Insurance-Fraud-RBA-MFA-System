@@ -101,7 +101,7 @@ def generate_synthetic_users(n_users: int = N_USERS) -> pd.DataFrame:
 
         # Select a valid city-state pair for user location
         user_city, user_state = VALID_CITY_STATE_PAIRS[np.random.randint(len(VALID_CITY_STATE_PAIRS))]
-        
+
         user = {
             # user biodata
             'user_id': str(uuid.uuid4()),
@@ -260,6 +260,7 @@ def generate_synthetic_claims(user_df: pd.DataFrame) -> pd.DataFrame:
                 claim_type = 'other'
 
             # Generate base claim amount based on claim type
+            # TODO: Probe for new range for NGN use case
             if claim_type == 'medical':
                 base_amount = np.random.lognormal(8, 1.2)  # $1k - $400k
             elif claim_type == 'accident':
@@ -489,6 +490,7 @@ def generate_transaction_contexts(
         # Session behavior
         if claim['is_fraudulent']:
             # Fraudsters often rush or behave abnormally
+            # TODO: Adjust session time parameters to fit research findings
             if np.random.random() < 0.6:
                 # Rushed
                 form_fill_time = np.random.uniform(30, 180)
