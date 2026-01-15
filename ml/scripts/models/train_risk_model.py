@@ -81,9 +81,10 @@ def engineer_risk_features(df):
     # -- Session behavior features
     df['form_fill_time_minutes'] = df['form_fill_time_seconds'] / 60.0
     df['is_rushed_form'] = (df['form_fill_time_seconds'] < 180).astype(int)
+    # TODO: Adjust form fill time for retraining
     df['is_suspicious_session'] = (
-        (df['form_fill_time_seconds'] < 120) |
-        (df['form_fill_time_seconds'] > 1200)
+        (df['form_fill_time_seconds'] < 30) |
+        (df['form_fill_time_seconds'] > 100)
     ).astype(int)
 
     # -- User history features
@@ -217,11 +218,12 @@ def select_features():
 
 def train_risk_model(X_train, y_train, X_test, y_test):
     """Train XGBoost model for risk classification."""
+    # TODO: Consider SMOTE for imbalance
     print("\nTraining Risk Scoring Model...")
     print(f"Training set: {len(X_train)} samples")
     print(f"Test set: {len(X_test)} samples")
 
-     # Define parameter grid for tuning
+    # Define parameter grid for tuning
     param_grid = {
         'max_depth': [4, 6, 8],
         'learning_rate': [0.01, 0.05, 0.1],
@@ -431,6 +433,7 @@ def main():
 
     # Scale features
     scaler = StandardScaler()
+    # TODO: Transform using '.values' to remove feature names?
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
 

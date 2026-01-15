@@ -94,8 +94,9 @@ def engineer_fraud_features(df):
     )
 
     # -- Staged incident indicators
+    # TODO: Adjust rushed form timing for retraining
     df['has_few_documents'] = (df['supporting_documents_count'] < 2).astype(int)
-    df['is_rushed_form'] = (df['form_fill_time_seconds'] < 180).astype(int)
+    df['is_rushed_form'] = (df['form_fill_time_seconds'] < 30).astype(int)
     df['is_unusual_time_numeric'] = df['is_unusual_time'].astype(int)
 
     ## Staged incident composite score
@@ -112,8 +113,8 @@ def engineer_fraud_features(df):
     ## Session behavior anomalies
     df['form_fill_time_minutes'] = df['form_fill_time_seconds'] / 60.0
     df['is_suspicious_session'] = (
-        (df['form_fill_time_seconds'] < 120) |
-        (df['form_fill_time_seconds'] > 1200)
+        (df['form_fill_time_seconds'] < 30) |
+        (df['form_fill_time_seconds'] > 120)
     ).astype(int)
 
     ## Time pattern anomalies
