@@ -1,20 +1,20 @@
 {
-  "generation_date": "2025-11-20T12:38:56.371548",
+  "generation_date": "2026-01-15T10:28:20.711213",
   "n_users": 1000,
-  "n_claims": 9259,
-  "fraud_rate": 0.14440004320120964,
-  "total_claim_amount": 28605166.450000003,
-  "avg_claim_amount": 3089.4444810454697,
+  "n_claims": 10158,
+  "fraud_rate": 0.16666666666666666,
+  "total_claim_amount": 30877216.11,
+  "avg_claim_amount": 3039.6944388659185,
   "risk_distribution": {
-    "low": 684,
-    "medium": 209,
-    "high": 107
+    "low": 592,
+    "medium": 247,
+    "high": 161
   },
   "fraud_type_distribution": {
-    "exaggerated": 474,
-    "staged": 315,
-    "out_of_pattern": 215,
-    "duplicate": 205,
-    "identity_theft": 128
+    "exaggerated": 600,
+    "staged": 430,
+    "out_of_pattern": 246,
+    "duplicate": 243,
+    "identity_theft": 174
   }
 }

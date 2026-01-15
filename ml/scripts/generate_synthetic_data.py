@@ -61,7 +61,7 @@ def generate_synthetic_users(n_users: int = N_USERS) -> pd.DataFrame:
         # Risk profile distribution: 70% low, 20% medium, 10% high
         risk_profile = np.random.choice(
             ['low', 'medium', 'high'],
-            p=[0.70, 0.20, 0.10]
+            p=[0.60, 0.25, 0.15]
         )
 
         # Policy start date (1-5 years ago)
@@ -244,7 +244,7 @@ def generate_synthetic_claims(user_df: pd.DataFrame) -> pd.DataFrame:
             if user['policy_type'] == 'auto':
                 claim_type = np.random.choice(
                     ['accident', 'theft', 'other'],
-                    p=[0.70, 0.20, 0.10]
+                    p=[0.60, 0.30, 0.10]
                 )
             elif user['policy_type'] == 'home':
                 claim_type = np.random.choice(
@@ -262,15 +262,15 @@ def generate_synthetic_claims(user_df: pd.DataFrame) -> pd.DataFrame:
             # Generate base claim amount based on claim type
             # TODO: Probe for new range for NGN use case
             if claim_type == 'medical':
-                base_amount = np.random.lognormal(8, 1.2)  # $1k - $400k
+                base_amount = np.random.lognormal(8, 1.2)  # 1k - 400k
             elif claim_type == 'accident':
-                base_amount = np.random.lognormal(7.5, 1.0)  # $800 - $150k
+                base_amount = np.random.lognormal(7.5, 1.0)  # 800 - 150k
             elif claim_type == 'property_damage':
-                base_amount = np.random.lognormal(7, 1.3)  # $500 - $200k
+                base_amount = np.random.lognormal(7, 1.3)  # 500 - 200k
             elif claim_type == 'theft':
-                base_amount = np.random.lognormal(6.5, 1.1)  # $300 - $80k
+                base_amount = np.random.lognormal(6.6, 1.1)  # 300 - 150k
             else:  # other
-                base_amount = np.random.lognormal(6, 1.0)  # $200 - $50k
+                base_amount = np.random.lognormal(6, 1.0)  # 200 - 50k
 
             # Ensure the claim does not exceed coverage (with some margin)
             base_amount = min(base_amount, user['coverage_amount'] * 0.95)
@@ -493,16 +493,16 @@ def generate_transaction_contexts(
             # TODO: Adjust session time parameters to fit research findings
             if np.random.random() < 0.6:
                 # Rushed
-                form_fill_time = np.random.uniform(30, 180)
-                session_duration = np.random.uniform(120, 600)
+                form_fill_time = np.random.uniform(5, 20)
+                session_duration = np.random.uniform(10, 50)
             else:
                 # Overly careful
-                form_fill_time = np.random.uniform(900, 1800)
-                session_duration = np.random.uniform(1200, 3600)
+                form_fill_time = np.random.uniform(140, 360)
+                session_duration = np.random.uniform(180, 420)
         else:
             # Normal behavior
-            form_fill_time = np.random.uniform(180, 900)
-            session_duration = np.random.uniform(300, 1800)
+            form_fill_time = np.random.uniform(30, 100)
+            session_duration = np.random.uniform(60, 150)
 
         # Time patterns
         hour = claim['submitted_at'].hour
