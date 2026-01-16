@@ -42,7 +42,7 @@ class FeatureEngineeringService:
 
         # -- Claim amount features
         claim_amount = float(claim_data['claim_amount'])
-        coverage_amount = float(user.coverage_amount) if user.coverage_amount else 100000
+        coverage_amount = float(user.coverage_amount) if user.coverage_amount else 380000
 
         features['claim_amount_log'] = np.log1p(claim_amount)
         features['claim_amount_ratio'] = claim_amount / coverage_amount
@@ -117,15 +117,16 @@ class FeatureEngineeringService:
         features['is_weekend'] = 1 if transaction_day in [5, 6] else 0
 
         # -- Session behavior
-        form_fill_time = context_data.get('form_fill_time', 300)
-        session_duration = context_data.get('session_duration', 600)
-        pages_visited = context_data.get('pages_visited', 5)
+        form_fill_time = context_data.get('form_fill_time', 80)
+        session_duration = context_data.get('session_duration', 120)
+        pages_visited = context_data.get('pages_visited', 2)
 
         features['session_duration_seconds'] = session_duration
         features['form_fill_time_minutes'] = form_fill_time / 60.0
         # TODO: Probe rushed form logic & suspicious session. Proposing less than a minute
-        features['is_rushed_form'] = 1 if form_fill_time < 180 else 0
-        features['is_suspicious_session'] = 1 if (form_fill_time < 120 or form_fill_time > 1200) else 0
+        features['is_rushed_form'] = 1 if form_fill_time < 30 else 0
+        # TODO: Edit to match engineered features from training.
+        features['is_suspicious_session'] = 1 if (form_fill_time < 30 or form_fill_time > 100) else 0
         features['pages_visited'] = pages_visited
 
         # -- User features
@@ -234,7 +235,7 @@ class FeatureEngineeringService:
         features['user_total_claims'] = len(user_claims)
 
         # -- Identity theft indicators
-        geolocation_distance = context_data.get('geolocation_distance_km', 0)
+        geolocation_distance = context_data.get('geolocation_distance_km', 120)
         is_geolocation_anomaly = context_data.get('is_geolocation_anomaly', False)
 
         if geolocation_distance > 1000:
@@ -291,7 +292,7 @@ class FeatureEngineeringService:
         # Session behavior
         session_duration = context_data.get('session_duration', 600)
         features['session_duration_seconds'] = session_duration
-        features['is_suspicious_session'] = 1 if (form_fill_time < 120 or form_fill_time > 1200) else 0
+        features['is_suspicious_session'] = 1 if (form_fill_time < 30 or form_fill_time > 100) else 0
 
         # -- Time features
         transaction_hour = context_data.get('transaction_hour', datetime.now(dt.UTC).hour)

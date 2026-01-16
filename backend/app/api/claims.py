@@ -79,7 +79,7 @@ def submit_claim(
                 'country': current_user.country
             },
             'is_geolocation_anomaly': False,  # Would be calculated based on user's typical location
-            'geolocation_distance_km': 0,  # Distance from user's typical location
+            'geolocation_distance_km': 120,  # Distance from user's typical location
             'device': {
                 'fingerprint': device_fingerprint,  # TODO: How to get fingerprint and save in db
                 'type': 'desktop',  # TODO: Would be detected from user agent
