@@ -10,10 +10,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
 
+try:
+    from imblearn.over_sampling import SMOTE
+except ImportError as e:
+    raise ImportError(
+        "imblearn is required for SMOTE. Install with: pip install imbalanced-learn"
+    ) from e
+
 # Configuration
 RANDOM_STATE = 42
-TEST_SIZE = 0.2
+TEST_SIZE = 0.3
 MODEL_OUTPUT_DIR = '../../artifacts/models'
+METADATA_DIR = '../../artifacts/metadata'
 PLOTS_DIR = '../../plots'
 DATA_PATH = '../../data/synthetic/insurance_claims_v1_full.csv'
 
@@ -80,8 +88,8 @@ def engineer_risk_features(df):
 
     # -- Session behavior features
     df['form_fill_time_minutes'] = df['form_fill_time_seconds'] / 60.0
-    df['is_rushed_form'] = (df['form_fill_time_seconds'] < 180).astype(int)
-    # TODO: Adjust form fill time for retraining
+    df['is_rushed_form'] = (df['form_fill_time_seconds'] < 30).astype(int)
+
     df['is_suspicious_session'] = (
         (df['form_fill_time_seconds'] < 30) |
         (df['form_fill_time_seconds'] > 100)
@@ -218,10 +226,20 @@ def select_features():
 
 def train_risk_model(X_train, y_train, X_test, y_test):
     """Train XGBoost model for risk classification."""
-    # TODO: Consider SMOTE for imbalance
+    # Apply SMOTE to address class imbalance (training data only)
     print("\nTraining Risk Scoring Model...")
     print(f"Training set: {len(X_train)} samples")
     print(f"Test set: {len(X_test)} samples")
+
+    print("\nClass distribution (before SMOTE):")
+    print(y_train.value_counts().sort_index())
+
+    smote = SMOTE(random_state=RANDOM_STATE)
+    X_train, y_train = smote.fit_resample(X_train, y_train)
+
+    print("\nClass distribution (after SMOTE):")
+    print(pd.Series(y_train).value_counts().sort_index())
+    print(f"\nTraining set after SMOTE: {len(X_train)} samples")
 
     # Define parameter grid for tuning
     param_grid = {
@@ -265,7 +283,7 @@ def train_risk_model(X_train, y_train, X_test, y_test):
     grid_search = GridSearchCV(
         xgb_model,
         param_grid_small,
-        cv=3,
+        cv=5,
         scoring='accuracy',
         n_jobs=-1,
         verbose=1
@@ -385,13 +403,13 @@ def save_model_artifacts(model, scaler, label_encoders, feature_names, metadata)
     print(f"✓ Label encoders saved to {encoders_path}")
 
     # Save feature names
-    features_path = f'{MODEL_OUTPUT_DIR}/risk_feature_names.json'
+    features_path = f'{METADATA_DIR}/risk_feature_names.json'
     with open(features_path, 'w') as f:
         json.dump(feature_names, f, indent=2)
     print(f"✓ Feature names saved to {features_path}")
 
     # Save metadata
-    metadata_path = f'{MODEL_OUTPUT_DIR}/risk_model_metadata.json'
+    metadata_path = f'{METADATA_DIR}/risk_model_metadata.json'
     with open(metadata_path, 'w') as f:
         json.dump(metadata, f, indent=2)
     print(f"✓ Metadata saved to {metadata_path}")

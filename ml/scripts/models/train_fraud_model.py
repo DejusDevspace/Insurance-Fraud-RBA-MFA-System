@@ -114,7 +114,7 @@ def engineer_fraud_features(df):
     df['form_fill_time_minutes'] = df['form_fill_time_seconds'] / 60.0
     df['is_suspicious_session'] = (
         (df['form_fill_time_seconds'] < 30) |
-        (df['form_fill_time_seconds'] > 120)
+        (df['form_fill_time_seconds'] > 100)
     ).astype(int)
 
     ## Time pattern anomalies
