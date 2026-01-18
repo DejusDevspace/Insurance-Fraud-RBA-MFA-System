@@ -40,6 +40,7 @@ class FeatureEngineeringService:
         """
         features = {}
 
+        # TODO: Probe for inconsistent feature ranges with training data.
         # -- Claim amount features
         claim_amount = float(claim_data['claim_amount'])
         coverage_amount = float(user.coverage_amount) if user.coverage_amount else 380000
