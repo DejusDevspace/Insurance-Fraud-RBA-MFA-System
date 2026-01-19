@@ -51,7 +51,7 @@ class FraudPredictor:
 
             # Ensemble decision
             is_suspicious = (
-                is_anomaly or
+                # is_anomaly or
                 fraud_probability > settings.FRAUD_PROBABILITY_THRESHOLD
             )
             # print("SUSPECT?:", is_suspicious)

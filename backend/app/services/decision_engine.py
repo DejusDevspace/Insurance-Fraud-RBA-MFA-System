@@ -68,7 +68,7 @@ class DecisionEngine:
         }
 
         # Rule 1: Very high fraud probability - Block immediately
-        if fraud_probability > 0.85:
+        if fraud_probability > 0.95:
             decision.update({
                 'action': 'block',
                 'requires_mfa': False,
@@ -80,7 +80,7 @@ class DecisionEngine:
             return decision
 
         # Rule 2: High risk + high fraud - Block and flag for manual review
-        if risk_level == 'high' and fraud_probability > 0.7:
+        if risk_level == 'high' and fraud_probability > 0.85:
             decision.update({
                 'action': 'block',
                 'requires_mfa': False,
@@ -92,7 +92,7 @@ class DecisionEngine:
             return decision
 
         # Rule 3: High risk OR medium-high fraud - Require biometric MFA
-        if risk_level == 'high' or fraud_probability > 0.6:
+        if risk_level == 'high' or fraud_probability > 0.7:
             decision.update({
                 'action': 'require_mfa',
                 'requires_mfa': True,
@@ -141,7 +141,7 @@ class DecisionEngine:
         Returns:
             Dictionary with MFA requirements
         """
-        if risk_level == 'high' or fraud_probability > 0.6:
+        if risk_level == 'high' or fraud_probability > 0.7:
             return {
                 'requires_mfa': True,
                 'mfa_method': MFAMethod.BIOMETRIC.value,
