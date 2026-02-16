@@ -24,9 +24,9 @@ class ExplainabilityEngine:
         self.fraud_features = self.model_loader.get_fraud_features()
 
     def explain_risk_prediction(
-            self,
-            feature_vector: np.ndarray,
-            top_n: int = 5
+        self,
+        feature_vector: np.ndarray,
+        top_n: int = 5
     ) -> Dict:
         """
         Generate SHAP explanation for risk prediction
@@ -80,9 +80,9 @@ class ExplainabilityEngine:
             raise
 
     def explain_fraud_prediction(
-            self,
-            feature_vector: np.ndarray,
-            top_n: int = 5
+        self,
+        feature_vector: np.ndarray,
+        top_n: int = 5
     ) -> Dict:
         """
         Generate SHAP explanation for fraud prediction
