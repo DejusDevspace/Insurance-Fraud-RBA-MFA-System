@@ -1,17 +1,18 @@
 import React, { useState } from "react";
+import {
+    AlertTriangle,
+    Shield,
+    ChevronUp,
+    ChevronDown,
+    TrendingUp,
+} from "lucide-react";
 import { Card } from "../common/Card";
 import { Badge } from "../common/Badge";
 import { Button } from "../common/Button";
 import { LoadingSpinner } from "../common/LoadingSpinner";
+import { formatExplanationText } from "../../utils/textFormatter";
 import { useNotification } from "../../hooks/useNotification";
 import { fraudService } from "../../services/fraudService";
-import {
-    AlertTriangle,
-    Shield,
-    ChevronDown,
-    ChevronUp,
-    TrendingUp,
-} from "lucide-react";
 import type { FraudDetection, FraudExplanation } from "../../types/fraud.types";
 
 interface FraudAlertProps {
@@ -198,9 +199,11 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
                                         <h4 className="font-semibold text-primary mb-2">
                                             Fraud Analysis
                                         </h4>
-                                        <p className="text-sm text-muted">
-                                            {explanation.explanation}
-                                        </p>
+                                        <div className="text-sm text-muted whitespace-pre-line">
+                                            {formatExplanationText(
+                                                explanation.explanation,
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

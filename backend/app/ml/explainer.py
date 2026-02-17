@@ -185,20 +185,20 @@ class ExplainabilityEngine:
         risk_levels = ['low', 'medium', 'high']
         risk_level = risk_levels[risk_class]
 
-        explanation = f"This transaction was classified as **{risk_level} risk** based on the following factors:\n\n"
+        explanation = f"This transaction was classified as {risk_level} risk based on the following factors:\n\n"
 
         for i, feature in enumerate(top_features[:3], 1):
             feature_name = feature['feature']
             contribution = feature['contribution']
 
-            explanation += f"{i}. **{feature_name}**: This factor {contribution} the risk score.\n"
+            explanation += f"{i}. {feature_name}: This factor {contribution} the risk score.\n\n"
 
         if risk_level == 'high':
-            explanation += "\n⚠️ Due to high risk, additional authentication is required."
+            explanation += "\n\n⚠️ Due to high risk, additional authentication is required."
         elif risk_level == 'medium':
-            explanation += "\n⚡ Moderate risk detected. Standard verification will be applied."
+            explanation += "\n\n⚡ Moderate risk detected. Standard verification will be applied."
         else:
-            explanation += "\n✅ Low risk detected. Transaction can proceed with minimal verification."
+            explanation += "\n\n✅ Low risk detected. Transaction can proceed with minimal verification."
 
         return explanation
 
@@ -219,8 +219,8 @@ class ExplainabilityEngine:
             contribution = feature['contribution']
 
             if contribution == 'increases':
-                explanation += f"{i}. **{feature_name}**: This is a red flag that increases fraud likelihood.\n"
+                explanation += f"{i}. {feature_name}: This is a red flag that increases fraud likelihood.\n\n"
             else:
-                explanation += f"{i}. **{feature_name}**: This factor decreases fraud suspicion.\n"
+                explanation += f"{i}. {feature_name}: This factor decreases fraud suspicion.\n\n"
 
         return explanation

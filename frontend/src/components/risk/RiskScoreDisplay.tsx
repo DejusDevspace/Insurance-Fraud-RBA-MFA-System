@@ -3,6 +3,7 @@ import { Card } from "../common/Card";
 import { Badge } from "../common/Badge";
 import { Button } from "../common/Button";
 import { LoadingSpinner } from "../common/LoadingSpinner";
+import { formatExplanationText } from "../../utils/textFormatter";
 import { useNotification } from "../../hooks/useNotification";
 import { riskService } from "../../services/riskService";
 import {
@@ -104,7 +105,7 @@ const RiskScoreDisplay: React.FC<RiskScoreDisplayProps> = ({
                     </span>
                     <span
                         className={`text-3xl font-bold ${getRiskColor(
-                            riskScore.risk_level
+                            riskScore.risk_level,
                         )}`}
                     >
                         {riskPercentage}%
@@ -116,8 +117,8 @@ const RiskScoreDisplay: React.FC<RiskScoreDisplayProps> = ({
                             riskScore.risk_level === "low"
                                 ? "bg-linear-to-r from-success to-greenAccent"
                                 : riskScore.risk_level === "medium"
-                                ? "bg-linear-to-r from-warning to-yellow-500"
-                                : "bg-linear-to-r from-error to-red-600"
+                                  ? "bg-linear-to-r from-warning to-yellow-500"
+                                  : "bg-linear-to-r from-error to-red-600"
                         }`}
                         style={{ width: `${riskPercentage}%` }}
                     />
@@ -140,7 +141,7 @@ const RiskScoreDisplay: React.FC<RiskScoreDisplayProps> = ({
                             .sort(
                                 ([, a], [, b]) =>
                                     Math.abs(b as number) -
-                                    Math.abs(a as number)
+                                    Math.abs(a as number),
                             )
                             .slice(0, 3)
                             .map(([factor, value]) => (
@@ -159,7 +160,7 @@ const RiskScoreDisplay: React.FC<RiskScoreDisplayProps> = ({
                                         )}
                                         <span className="text-sm font-medium text-primary">
                                             {Math.abs(value as number).toFixed(
-                                                2
+                                                2,
                                             )}
                                         </span>
                                     </div>
@@ -203,9 +204,11 @@ const RiskScoreDisplay: React.FC<RiskScoreDisplayProps> = ({
                                         <h4 className="font-semibold text-primary mb-2">
                                             Risk Analysis
                                         </h4>
-                                        <p className="text-sm text-muted">
-                                            {explanation.explanation}
-                                        </p>
+                                        <div className="text-sm text-muted whitespace-pre-line">
+                                            {formatExplanationText(
+                                                explanation.explanation,
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -231,7 +234,7 @@ const RiskScoreDisplay: React.FC<RiskScoreDisplayProps> = ({
                                                             <p className="text-sm font-medium text-primary capitalize">
                                                                 {factor.factor.replace(
                                                                     /_/g,
-                                                                    " "
+                                                                    " ",
                                                                 )}
                                                             </p>
                                                             <p className="text-xs text-muted mt-1">
@@ -243,14 +246,14 @@ const RiskScoreDisplay: React.FC<RiskScoreDisplayProps> = ({
                                                                 risk by{" "}
                                                                 {(
                                                                     Math.abs(
-                                                                        factor.magnitude
+                                                                        factor.magnitude,
                                                                     ) * 100
                                                                 ).toFixed(1)}
                                                                 %
                                                             </p>
                                                         </div>
                                                     </div>
-                                                )
+                                                ),
                                             )}
                                         </div>
                                     </div>
