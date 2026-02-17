@@ -88,9 +88,9 @@ def submit_claim(
             },
             'device_trust_score': 0.5,
             'is_trusted_device': False,
-            'session_duration': claim_data.session_duration,  # TODO: Would be tracked in session (frontend)
-            'pages_visited': claim_data.pages_visited,  # TODO: Should be tracked by frontend
-            'form_fill_time': claim_data.form_fill_time,  # TODO: Would be tracked by frontend
+            'session_duration': claim_data.session_duration,
+            'pages_visited': claim_data.pages_visited,
+            'form_fill_time': claim_data.form_fill_time,
             'is_unusual_time': False,
             'transaction_hour': transaction_hour,
             'transaction_day_of_week': transaction_day
@@ -106,6 +106,7 @@ def submit_claim(
 
         # If MFA required and method is OTP, generate OTP
         if decision.get('requires_mfa') and decision.get('mfa_method') == 'otp':
+            print('= * 30', 'SENDING OTP', '= * 30')
             otp = MFAService.generate_otp(str(claim.claim_id))
             MFAService.send_otp_notification(current_user, otp)
 

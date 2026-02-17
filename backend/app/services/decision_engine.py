@@ -80,7 +80,7 @@ class DecisionEngine:
             return decision
 
         # Rule 2: High risk + high fraud - Block and flag for manual review
-        if risk_level == 'high' and fraud_probability > 0.85:
+        if risk_level == 'high' and fraud_probability > 0.8:
             decision.update({
                 'action': 'block',
                 'requires_mfa': False,
@@ -92,7 +92,7 @@ class DecisionEngine:
             return decision
 
         # Rule 3: High risk OR medium-high fraud - Require biometric MFA
-        if risk_level == 'high' or fraud_probability > 0.7:
+        if risk_level == 'high' or fraud_probability > 0.6:
             decision.update({
                 'action': 'require_mfa',
                 'requires_mfa': True,
@@ -104,7 +104,7 @@ class DecisionEngine:
             return decision
 
         # Rule 4: Medium risk OR low-medium fraud - Require OTP
-        if risk_level == 'medium' or fraud_probability > 0.3:
+        if risk_level == 'medium' or fraud_probability > 0.4:
             decision.update({
                 'action': 'require_mfa',
                 'requires_mfa': True,
