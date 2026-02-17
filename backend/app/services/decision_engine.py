@@ -104,7 +104,7 @@ class DecisionEngine:
             return decision
 
         # Rule 4: Medium risk OR low-medium fraud - Require OTP
-        if risk_level == 'medium' or fraud_probability > 0.4:
+        if risk_level == 'medium' or fraud_probability > 0.1:
             decision.update({
                 'action': 'require_mfa',
                 'requires_mfa': True,
