@@ -23,7 +23,7 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
     const { showNotification } = useNotification();
     const [showDetails, setShowDetails] = useState(false);
     const [explanation, setExplanation] = useState<FraudExplanation | null>(
-        null
+        null,
     );
     const [loadingExplanation, setLoadingExplanation] = useState(false);
 
@@ -47,6 +47,7 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
     };
 
     const fraudPercentage = Math.round(fraudDetection.fraud_probability * 100);
+    const isSuspicious = fraudDetection.is_suspicious;
 
     const getConfidenceBadge = () => {
         if (fraudPercentage >= 70)
@@ -56,16 +57,28 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
         return <Badge variant="info">Low Confidence</Badge>;
     };
 
+    const getAlertColor = () => {
+        return isSuspicious ? "error" : "success";
+    };
+
+    const getAlertIcon = () => {
+        return isSuspicious ? AlertTriangle : Shield;
+    };
+
+    const AlertIcon = getAlertIcon();
+    const alertColor = getAlertColor();
+
     return (
-        <Card className="border-error">
+        <Card className={`border-${alertColor}`}>
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                    <div className="p-3 rounded-lg bg-error/10">
-                        <AlertTriangle className="w-6 h-6 text-error" />
+                    <div className={`p-3 rounded-lg bg-${alertColor}/10`}>
+                        <AlertIcon className={`w-6 h-6 text-${alertColor}`} />
                     </div>
                     <div>
                         <h2 className="text-xl font-semibold text-primary mb-1">
-                            Fraud Detection Alert
+                            Fraud Detection{" "}
+                            {isSuspicious ? "Alert" : "Analysis"}
                         </h2>
                         <p className="text-sm text-muted">
                             ML Model: {fraudDetection.model_used}
@@ -75,17 +88,24 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
                 {getConfidenceBadge()}
             </div>
 
-            {/* Warning Message */}
-            <div className="p-4 rounded-lg bg-error/10 border border-error mb-6">
+            {/* Alert Message */}
+            <div
+                className={`p-4 rounded-lg bg-${alertColor}/10 border border-${alertColor} mb-6`}
+            >
                 <div className="flex items-start gap-3">
-                    <Shield className="w-5 h-5 text-error shrink-0 mt-0.5" />
+                    <Shield
+                        className={`w-5 h-5 text-${alertColor} shrink-0 mt-0.5`}
+                    />
                     <div>
-                        <h3 className="font-semibold text-error mb-1">
-                            Suspicious Activity Detected
+                        <h3 className={`font-semibold text-${alertColor} mb-1`}>
+                            {isSuspicious
+                                ? "Suspicious Activity Detected"
+                                : "No Fraud Detected"}
                         </h3>
                         <p className="text-sm text-muted">
-                            This claim has been flagged by our fraud detection
-                            system. Please review the analysis below.
+                            {isSuspicious
+                                ? "This claim has been flagged by our fraud detection system. Please review the analysis below."
+                                : "This claim has passed our fraud detection analysis and appears legitimate."}
                         </p>
                     </div>
                 </div>
@@ -97,13 +117,13 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
                     <span className="text-sm font-medium text-muted">
                         Fraud Probability
                     </span>
-                    <span className="text-3xl font-bold text-error">
+                    <span className={`text-3xl font-bold text-${alertColor}`}>
                         {fraudPercentage}%
                     </span>
                 </div>
                 <div className="w-full h-3 bg-surface rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-linear-to-r from-error to-red-600 transition-all duration-500"
+                        className={`h-full bg-linear-to-r from-${alertColor} to-${alertColor}-600 transition-all duration-500`}
                         style={{ width: `${fraudPercentage}%` }}
                     />
                 </div>
@@ -116,10 +136,12 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
                         <span className="text-sm text-muted">
                             Predicted Fraud Type
                         </span>
-                        <span className="font-semibold text-error capitalize">
+                        <span
+                            className={`font-semibold text-${alertColor} capitalize`}
+                        >
                             {fraudDetection.predicted_fraud_type.replace(
                                 /_/g,
-                                " "
+                                " ",
                             )}
                         </span>
                     </div>
@@ -169,7 +191,9 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
                             {/* Explanation Text */}
                             <div className="p-4 rounded-lg bg-surface">
                                 <div className="flex items-start gap-3">
-                                    <AlertTriangle className="w-5 h-5 text-error shrink-0 mt-0.5" />
+                                    <AlertIcon
+                                        className={`w-5 h-5 text-${alertColor} shrink-0 mt-0.5`}
+                                    />
                                     <div>
                                         <h4 className="font-semibold text-primary mb-2">
                                             Fraud Analysis
@@ -182,12 +206,16 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
                             </div>
 
                             {/* Confidence Level */}
-                            <div className="p-3 rounded-lg bg-error/10 border border-error">
+                            <div
+                                className={`p-3 rounded-lg bg-${alertColor}/10 border border-${alertColor}`}
+                            >
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm font-medium text-primary">
                                         Confidence Level
                                     </span>
-                                    <span className="text-sm font-semibold text-error">
+                                    <span
+                                        className={`text-sm font-semibold text-${alertColor}`}
+                                    >
                                         {explanation.confidence_level}
                                     </span>
                                 </div>
@@ -208,7 +236,9 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
                                                         key={index}
                                                         className="flex items-start gap-3 p-3 rounded-lg bg-surface border border-aux"
                                                     >
-                                                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-error/10 text-error text-xs font-bold shrink-0">
+                                                        <span
+                                                            className={`flex items-center justify-center w-6 h-6 rounded-full bg-${alertColor}/10 text-${alertColor} text-xs font-bold shrink-0`}
+                                                        >
                                                             {index + 1}
                                                         </span>
                                                         <div className="flex-1">
@@ -216,17 +246,21 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
                                                                 <p className="text-sm font-medium text-primary capitalize">
                                                                     {feature.feature.replace(
                                                                         /_/g,
-                                                                        " "
+                                                                        " ",
                                                                     )}
                                                                 </p>
                                                                 <div className="flex items-center gap-1">
-                                                                    <TrendingUp className="w-3 h-3 text-error" />
-                                                                    <span className="text-xs font-semibold text-error">
+                                                                    <TrendingUp
+                                                                        className={`w-3 h-3 text-${alertColor}`}
+                                                                    />
+                                                                    <span
+                                                                        className={`text-xs font-semibold text-${alertColor}`}
+                                                                    >
                                                                         {(
                                                                             feature.magnitude *
                                                                             100
                                                                         ).toFixed(
-                                                                            1
+                                                                            1,
                                                                         )}
                                                                         %
                                                                     </span>
@@ -235,7 +269,7 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
                                                             <p className="text-xs text-muted">
                                                                 SHAP Value:{" "}
                                                                 {feature.shap_value.toFixed(
-                                                                    4
+                                                                    4,
                                                                 )}{" "}
                                                                 •{" "}
                                                                 {feature.contribution ===
@@ -247,7 +281,7 @@ const FraudAlert: React.FC<FraudAlertProps> = ({ claimId, fraudDetection }) => {
                                                             </p>
                                                         </div>
                                                     </div>
-                                                )
+                                                ),
                                             )}
                                         </div>
                                     </div>

@@ -37,7 +37,7 @@ const ClaimDetailsPage: React.FC = () => {
     const [claim, setClaim] = useState<Claim | null>(null);
     const [riskScore, setRiskScore] = useState<RiskScore | null>(null);
     const [fraudDetection, setFraudDetection] = useState<FraudDetection | null>(
-        null
+        null,
     );
     const [loading, setLoading] = useState(true);
     const [showMFAModal, setShowMFAModal] = useState(false);
@@ -52,16 +52,35 @@ const ClaimDetailsPage: React.FC = () => {
         try {
             const [claimData, riskData, fraudData] = await Promise.all([
                 claimService.getClaimById(claimId!),
-                riskService.getRiskScore(claimId!).catch(() => null),
-                fraudService.getFraudDetection(claimId!).catch(() => null),
+                riskService.getRiskScore(claimId!),
+                fraudService.getFraudDetection(claimId!),
             ]);
 
             setClaim(claimData);
             setRiskScore(riskData);
             setFraudDetection(fraudData);
         } catch (error: any) {
-            showNotification("error", "Failed to load claim details");
-            navigate("/claims/history");
+            console.error("Error fetching claim details:", error);
+
+            // Try to fetch claim and risk data without fraud
+            try {
+                const [claimData, riskData] = await Promise.all([
+                    claimService.getClaimById(claimId!),
+                    riskService.getRiskScore(claimId!).catch(() => null),
+                ]);
+
+                setClaim(claimData);
+                setRiskScore(riskData);
+
+                // Log fraud API failure for debugging
+                console.warn(
+                    "Fraud detection data unavailable:",
+                    error.response?.data?.detail || error.message,
+                );
+            } catch (claimError: any) {
+                showNotification("error", "Failed to load claim details");
+                navigate("/claims/history");
+            }
         } finally {
             setLoading(false);
         }
@@ -71,7 +90,7 @@ const ClaimDetailsPage: React.FC = () => {
         setShowMFAModal(false);
         showNotification(
             "success",
-            "Verification successful! Claim has been processed."
+            "Verification successful! Claim has been processed.",
         );
         fetchClaimDetails(); // Refresh claim data
     };
@@ -250,7 +269,7 @@ const ClaimDetailsPage: React.FC = () => {
                             </p>
                             <p className="font-semibold text-primary">
                                 {new Date(
-                                    claim.incident_date
+                                    claim.incident_date,
                                 ).toLocaleDateString("en-US", {
                                     year: "numeric",
                                     month: "long",
@@ -314,7 +333,7 @@ const ClaimDetailsPage: React.FC = () => {
                 )}
 
                 {/* Fraud Detection */}
-                {fraudDetection && fraudDetection.is_suspicious && (
+                {fraudDetection && (
                     <div className="mb-6">
                         <FraudAlert
                             claimId={claim.claim_id}
