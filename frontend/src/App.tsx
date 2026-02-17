@@ -3,6 +3,8 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminRoute from "./components/auth/AdminRoute";
 import { NotificationProvider } from "./contexts/NotificationContext";
+import { SessionTrackingProvider } from "./contexts/SessionTrackingContext";
+import PageTracker from "./components/tracking/PageTracker";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import DashboardPage from "./pages/user/DashboardPage";
@@ -15,66 +17,72 @@ function App() {
     return (
         <BrowserRouter>
             <AuthProvider>
-                <NotificationProvider>
-                    <Routes>
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/register" element={<RegisterPage />} />
+                <SessionTrackingProvider>
+                    <NotificationProvider>
+                        <PageTracker />
+                        <Routes>
+                            <Route path="/login" element={<LoginPage />} />
+                            <Route
+                                path="/register"
+                                element={<RegisterPage />}
+                            />
 
-                        {/* Protected User Routes */}
-                        <Route
-                            path="/dashboard"
-                            element={
-                                <ProtectedRoute>
-                                    <DashboardPage />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="/claims/submit"
-                            element={
-                                <ProtectedRoute>
-                                    <SubmitClaimPage />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="/claims/history"
-                            element={
-                                <ProtectedRoute>
-                                    <ClaimsHistoryPage />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="/claims/:claimId"
-                            element={
-                                <ProtectedRoute>
-                                    <ClaimDetailsPage />
-                                </ProtectedRoute>
-                            }
-                        />
+                            {/* Protected User Routes */}
+                            <Route
+                                path="/dashboard"
+                                element={
+                                    <ProtectedRoute>
+                                        <DashboardPage />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/claims/submit"
+                                element={
+                                    <ProtectedRoute>
+                                        <SubmitClaimPage />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/claims/history"
+                                element={
+                                    <ProtectedRoute>
+                                        <ClaimsHistoryPage />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/claims/:claimId"
+                                element={
+                                    <ProtectedRoute>
+                                        <ClaimDetailsPage />
+                                    </ProtectedRoute>
+                                }
+                            />
 
-                        {/* Admin Routes */}
-                        <Route
-                            path="/admin/dashboard"
-                            element={
-                                <AdminRoute>
-                                    <AdminDashboardPage />
-                                </AdminRoute>
-                            }
-                        />
+                            {/* Admin Routes */}
+                            <Route
+                                path="/admin/dashboard"
+                                element={
+                                    <AdminRoute>
+                                        <AdminDashboardPage />
+                                    </AdminRoute>
+                                }
+                            />
 
-                        {/* Redirects */}
-                        <Route
-                            path="/"
-                            element={<Navigate to="/login" replace />}
-                        />
-                        <Route
-                            path="*"
-                            element={<Navigate to="/login" replace />}
-                        />
-                    </Routes>
-                </NotificationProvider>
+                            {/* Redirects */}
+                            <Route
+                                path="/"
+                                element={<Navigate to="/login" replace />}
+                            />
+                            <Route
+                                path="*"
+                                element={<Navigate to="/login" replace />}
+                            />
+                        </Routes>
+                    </NotificationProvider>
+                </SessionTrackingProvider>
             </AuthProvider>
         </BrowserRouter>
     );

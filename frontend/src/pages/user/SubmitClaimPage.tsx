@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../hooks/useNotification";
-import { useSessionTracking } from "../../hooks/useSessionTracking";
+import { useSessionTrackingContext } from "../../contexts/SessionTrackingContext";
 import { claimService } from "../../services/claimService";
 import { Card } from "../../components/common/Card";
 import { Input } from "../../components/common/Input";
@@ -28,7 +28,7 @@ import type {
 const SubmitClaimPage: React.FC = () => {
     const navigate = useNavigate();
     const { showNotification } = useNotification();
-    const { session_duration, pages_visited } = useSessionTracking();
+    const { getSessionDuration, sessionData } = useSessionTrackingContext();
 
     const [formData, setFormData] = useState<ClaimSubmission>({
         claim_type: "accident",
@@ -45,14 +45,14 @@ const SubmitClaimPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [showMFAModal, setShowMFAModal] = useState(false);
     const [mfaMethod, setMfaMethod] = useState<"otp" | "biometric" | null>(
-        null
+        null,
     );
     const [claimResponse, setClaimResponse] =
         useState<ClaimSubmissionResponse | null>(null);
 
     const handleChange = (
         field: keyof ClaimSubmission,
-        value: string | number
+        value: string | number,
     ) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
@@ -73,7 +73,7 @@ const SubmitClaimPage: React.FC = () => {
         ) {
             showNotification(
                 "error",
-                "Please provide a detailed description (min 10 characters)"
+                "Please provide a detailed description (min 10 characters)",
             );
             return false;
         }
@@ -97,20 +97,21 @@ const SubmitClaimPage: React.FC = () => {
 
         try {
             // Calculate form fill time in seconds
-            const formFillTime = Math.floor((Date.now() - formStartTimeRef.current) / 1000);
+            const formFillTime = Math.floor(
+                (Date.now() - formStartTimeRef.current) / 1000,
+            );
 
             // Prepare claim data with timing information
             const claimDataWithTiming = {
                 ...formData,
                 form_fill_time: formFillTime,
-                session_duration,
-                pages_visited,
+                session_duration: getSessionDuration(),
+                pages_visited: sessionData.pages_visited,
             };
 
             console.log("CLAIM DATA:", claimDataWithTiming);
-            const response = await claimService.submitClaim(
-                claimDataWithTiming
-            );
+            const response =
+                await claimService.submitClaim(claimDataWithTiming);
             setClaimResponse(response);
             console.log("RESPONSE:", response);
 
@@ -120,13 +121,13 @@ const SubmitClaimPage: React.FC = () => {
                 setShowMFAModal(true);
                 showNotification(
                     "warning",
-                    `Additional verification required: ${response.mfa_method?.toUpperCase()}`
+                    `Additional verification required: ${response.mfa_method?.toUpperCase()}`,
                 );
             } else {
                 // Auto-approved
                 showNotification(
                     "success",
-                    response.message || "Claim submitted successfully!"
+                    response.message || "Claim submitted successfully!",
                 );
                 setTimeout(() => {
                     navigate(`/claims/${response.claim.claim_id}`);
@@ -136,7 +137,7 @@ const SubmitClaimPage: React.FC = () => {
             showNotification(
                 error.response?.data?.detail ||
                     "Failed to submit claim. Please try again.",
-                "error"
+                "error",
             );
         } finally {
             setLoading(false);
@@ -159,7 +160,7 @@ const SubmitClaimPage: React.FC = () => {
         setShowMFAModal(false);
         showNotification(
             "info",
-            "Claim submitted but pending MFA verification. You can complete it from your claims page."
+            "Claim submitted but pending MFA verification. You can complete it from your claims page.",
         );
         navigate("/claims/history");
     };
@@ -168,10 +169,10 @@ const SubmitClaimPage: React.FC = () => {
     useEffect(() => {
         setFormData((prev) => ({
             ...prev,
-            session_duration,
-            pages_visited,
+            session_duration: getSessionDuration(),
+            pages_visited: sessionData.pages_visited,
         }));
-    }, [session_duration, pages_visited]);
+    }, [getSessionDuration, sessionData.pages_visited]);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat("en-NG", {
@@ -256,7 +257,7 @@ const SubmitClaimPage: React.FC = () => {
                             onChange={(e) =>
                                 handleChange(
                                     "claim_amount",
-                                    parseFloat(e.target.value) || 0
+                                    parseFloat(e.target.value) || 0,
                                 )
                             }
                             placeholder="0.00"
@@ -293,7 +294,7 @@ const SubmitClaimPage: React.FC = () => {
                             onChange={(e) =>
                                 handleChange(
                                     "claim_description",
-                                    e.target.value
+                                    e.target.value,
                                 )
                             }
                             placeholder="Provide a detailed description of the incident..."
@@ -311,7 +312,7 @@ const SubmitClaimPage: React.FC = () => {
                             onChange={(e) =>
                                 handleChange(
                                     "supporting_documents_count",
-                                    parseInt(e.target.value) || 0
+                                    parseInt(e.target.value) || 0,
                                 )
                             }
                             placeholder="0"
