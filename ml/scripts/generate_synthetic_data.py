@@ -458,51 +458,65 @@ def generate_transaction_contexts(
         ].sort_values('submitted_at')
 
         # Device selection
-        is_fraud_identity_theft = claim['is_fraudulent'] and claim['fraud_type'] == 'identity_theft'
+        # Increased untrusted device usage across multiple fraud types (not just identity theft)
+        if claim['is_fraudulent']:
+            if claim['fraud_type'] == 'identity_theft':
+                use_untrusted = True
+            elif claim['fraud_type'] in ['staged', 'exaggerated']:
+                # 40% of staged/exaggerated use untrusted devices
+                use_untrusted = np.random.random() < 0.4
+            else:
+                use_untrusted = False
+        else:
+            # 5% of legitimate claims happen on new/untrusted devices (e.g. bought a new phone)
+            use_untrusted = np.random.random() < 0.05
 
-        if is_fraud_identity_theft:
-            # Identity theft uses unknown device
+        if use_untrusted:
+            # Untrusted device
             device_type = np.random.choice(['mobile', 'desktop', 'tablet'])
             device_fingerprint = hashlib.md5(f"unknown-{uuid.uuid4()}".encode()).hexdigest()[:16]
             is_trusted_device = False
-            device_trust_score = np.random.uniform(0.0, 0.2)
+            device_trust_score = np.random.uniform(0.0, 0.3)
         else:
             # Normal: use one of user's known devices
             device = np.random.choice(user_devices[claim['user_id']])
             device_type = device['type']
             device_fingerprint = device['fingerprint']
             is_trusted_device = True
-            device_trust_score = np.random.uniform(0.8, 1.0)
+            device_trust_score = np.random.uniform(0.7, 1.0)
 
         # Geolocation
-        if is_fraud_identity_theft:
+        if claim['is_fraudulent'] and claim['fraud_type'] == 'identity_theft':
             # Identity theft: unusual location with valid city-state pair
             geolocation_distance = np.random.uniform(300, 2000)
             is_geolocation_anomaly = True
             location_city, location_state = VALID_CITY_STATE_PAIRS[np.random.randint(len(VALID_CITY_STATE_PAIRS))]
         else:
-            # Normal: nearby location
-            geolocation_distance = np.random.uniform(0, 50)
-            is_geolocation_anomaly = False
+            # Normal or other fraud types (usually local): nearby location
+            geolocation_distance = np.random.lognormal(mean=2, sigma=1) # heavily gathered near 0, massive tail
+            is_geolocation_anomaly = geolocation_distance > 100
             location_city = user_locations[claim['user_id']]['city']
             location_state = user_locations[claim['user_id']]['state']
 
         # Session behavior
+        # Using overlapping log-normal distributions to eliminate hard boundaries
         if claim['is_fraudulent']:
-            # Fraudsters often rush or behave abnormally
-            # TODO: Adjust session time parameters to fit research findings
-            if np.random.random() < 0.6:
-                # Rushed
-                form_fill_time = np.random.uniform(5, 20)
-                session_duration = np.random.uniform(10, 50)
+            if np.random.random() < 0.5:
+                # Fraud - Rushed (Mean form fill ~20s, Session ~40s, high variance)
+                form_fill_time = np.random.lognormal(mean=np.log(20), sigma=0.5)
+                session_duration = form_fill_time + np.random.lognormal(mean=np.log(20), sigma=0.5)
             else:
-                # Overly careful
-                form_fill_time = np.random.uniform(140, 360)
-                session_duration = np.random.uniform(180, 420)
+                # Fraud - Overly Careful (Mean form fill ~150s, Session ~250s, high variance)
+                form_fill_time = np.random.lognormal(mean=np.log(150), sigma=0.5)
+                session_duration = form_fill_time + np.random.lognormal(mean=np.log(100), sigma=0.5)
         else:
-            # Normal behavior
-            form_fill_time = np.random.uniform(30, 100)
-            session_duration = np.random.uniform(60, 150)
+            # Normal behavior (Mean form fill ~60s, Session ~120s, high variance)
+            form_fill_time = np.random.lognormal(mean=np.log(60), sigma=0.6)
+            session_duration = form_fill_time + np.random.lognormal(mean=np.log(60), sigma=0.6)
+            
+        # Add floor limits
+        form_fill_time = max(5, form_fill_time)
+        session_duration = max(form_fill_time + 5, session_duration)
 
         # Time patterns
         hour = claim['submitted_at'].hour
@@ -519,7 +533,7 @@ def generate_transaction_contexts(
             is_rapid_succession = False
 
         # IP address (simulate realistic IPs)
-        if is_fraud_identity_theft:
+        if claim['is_fraudulent'] and claim['fraud_type'] == 'identity_theft':
             ip_address = fake.ipv4_public()
         else:
             # Same subnet for legitimate users

@@ -125,9 +125,9 @@ class FeatureEngineeringService:
         features['session_duration_seconds'] = session_duration
         features['form_fill_time_minutes'] = form_fill_time / 60.0
         # TODO: Probe rushed form logic & suspicious session. Proposing less than a minute
-        features['is_rushed_form'] = 1 if form_fill_time < 30 else 0
+        features['is_rushed_form'] = 1 if form_fill_time < 15 else 0
         # TODO: Edit to match engineered features from training.
-        features['is_suspicious_session'] = 1 if (form_fill_time < 30 or form_fill_time > 100) else 0
+        features['is_suspicious_session'] = 1 if (form_fill_time < 15 or form_fill_time > 240) else 0
         features['pages_visited'] = pages_visited
 
         # -- User features
@@ -275,7 +275,7 @@ class FeatureEngineeringService:
         features['has_few_documents'] = 1 if docs_count < 2 else 0
         features['form_fill_time_seconds'] = form_fill_time
         features['form_fill_time_minutes'] = form_fill_time / 60.0
-        features['is_rushed_form'] = 1 if form_fill_time < 180 else 0
+        features['is_rushed_form'] = 1 if form_fill_time < 15 else 0
 
         # Staged signal
         features['staged_signal'] = (
@@ -293,7 +293,7 @@ class FeatureEngineeringService:
         # Session behavior
         session_duration = context_data.get('session_duration', 600)
         features['session_duration_seconds'] = session_duration
-        features['is_suspicious_session'] = 1 if (form_fill_time < 30 or form_fill_time > 100) else 0
+        features['is_suspicious_session'] = 1 if (form_fill_time < 15 or form_fill_time > 240) else 0
 
         # -- Time features
         transaction_hour = context_data.get('transaction_hour', datetime.now(dt.UTC).hour)
