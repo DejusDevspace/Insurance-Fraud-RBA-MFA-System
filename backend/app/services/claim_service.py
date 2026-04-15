@@ -155,7 +155,7 @@ class ClaimService:
                 ip_address=context_data.get('ip_address'),
                 details={
                     'fraud_probability': float(fraud_detection_record.fraud_probability),
-                    'is_suspicious': fraud_detection_record.is_suspicious,
+                    'is_suspicious': bool(fraud_detection_record.is_suspicious),
                     'predicted_fraud_type': fraud_detection_record.predicted_fraud_type
                 }
             )
