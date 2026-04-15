@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func, and_
 from typing import List, Optional
-from datetime import datetime, timedelta
+import datetime as dt
+from datetime import datetime
 from uuid import UUID
 
 from app.database import get_db
@@ -97,7 +98,7 @@ def get_dashboard_stats(
         User.account_status == 'active'
     ).scalar()
 
-    today = datetime.utcnow().date()
+    today = datetime.now(dt.UTC).date()
     new_users_today = db.query(func.count(User.user_id)).filter(
         func.date(User.account_created_at) == today
     ).scalar()

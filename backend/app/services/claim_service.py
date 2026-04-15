@@ -9,11 +9,13 @@ from app.models.claim import Claim
 from app.models.user import User
 from app.models.transaction_context import TransactionContext
 from app.models.device import Device
+from app.models.audit_log import AuditLog
+from app.models.authentication_event import AuthenticationEvent
 from app.services.feature_engineering import FeatureEngineeringService
 from app.services.risk_service import RiskService
 from app.services.fraud_service import FraudService
 from app.services.decision_engine import DecisionEngine
-from app.core.constants import ClaimStatus
+from app.core.constants import ClaimStatus, AuthEventType, MFAMethod
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +72,21 @@ class ClaimService:
 
             logger.info(f"Claim created: {claim_number} for user {user.email}")
 
+            # Audit: Claim submitted
+            ClaimService._log_audit(
+                db=db,
+                user_id=user.user_id,
+                claim_id=claim.claim_id,
+                action_type='claim_submitted',
+                action_result='success',
+                ip_address=context_data.get('ip_address'),
+                details={
+                    'claim_number': claim_number,
+                    'claim_type': claim_data['claim_type'],
+                    'claim_amount': float(claim_data['claim_amount'])
+                }
+            )
+
             # Capture transaction context
             transaction_context = ClaimService._capture_transaction_context(
                 claim=claim,
@@ -105,6 +122,20 @@ class ClaimService:
                 db=db
             )
 
+            # Audit: Risk calculated
+            ClaimService._log_audit(
+                db=db,
+                user_id=user.user_id,
+                claim_id=claim.claim_id,
+                action_type='risk_calculated',
+                action_result='success',
+                ip_address=context_data.get('ip_address'),
+                details={
+                    'risk_score': float(risk_score_record.risk_score),
+                    'risk_level': risk_score_record.risk_level
+                }
+            )
+
             # Detect fraud
             fraud_service = FraudService()
             fraud_detection_record = fraud_service.detect_fraud(
@@ -112,6 +143,21 @@ class ClaimService:
                 user=user,
                 fraud_features=fraud_features,
                 db=db
+            )
+
+            # Audit: Fraud detected
+            ClaimService._log_audit(
+                db=db,
+                user_id=user.user_id,
+                claim_id=claim.claim_id,
+                action_type='fraud_detected',
+                action_result='success',
+                ip_address=context_data.get('ip_address'),
+                details={
+                    'fraud_probability': float(fraud_detection_record.fraud_probability),
+                    'is_suspicious': bool(fraud_detection_record.is_suspicious),
+                    'predicted_fraud_type': fraud_detection_record.predicted_fraud_type
+                }
             )
 
             # Make decision
@@ -122,6 +168,37 @@ class ClaimService:
                 fraud_detection_record=fraud_detection_record,
                 db=db
             )
+
+            # Audit: Decision made
+            ClaimService._log_audit(
+                db=db,
+                user_id=user.user_id,
+                claim_id=claim.claim_id,
+                action_type='decision_made',
+                action_result=decision['action'],
+                ip_address=context_data.get('ip_address'),
+                details={
+                    'action': decision['action'],
+                    'requires_mfa': decision.get('requires_mfa', False),
+                    'mfa_method': decision.get('mfa_method'),
+                    'reason': decision.get('reason')
+                }
+            )
+
+            # Record AuthenticationEvent for claim submission
+            auth_event = AuthenticationEvent(
+                user_id=user.user_id,
+                claim_id=claim.claim_id,
+                event_type=AuthEventType.CLAIM_SUBMISSION.value,
+                auth_method=MFAMethod.PASSWORD.value,
+                auth_result='success',
+                risk_level_at_auth=risk_score_record.risk_level,
+                mfa_required=decision.get('requires_mfa', False),
+                mfa_completed=False,
+                ip_address=context_data.get('ip_address')
+            )
+            db.add(auth_event)
+            db.flush()
 
             # Update claim status based on decision
             if decision['action'] == 'block':
@@ -275,6 +352,41 @@ class ClaimService:
         db.add(device)
 
         return device
+
+    @staticmethod
+    def _log_audit(
+        db: Session,
+        user_id: uuid.UUID,
+        claim_id: uuid.UUID,
+        action_type: str,
+        action_result: str,
+        ip_address: Optional[str] = None,
+        details: Optional[Dict] = None
+    ) -> None:
+        """
+        Create an AuditLog entry and flush it to the current transaction.
+
+        Args:
+            db: Database session
+            user_id: User performing the action
+            claim_id: Related claim
+            action_type: Type of action (claim_submitted, risk_calculated, etc.)
+            action_result: Outcome (success, failure, approve, block, etc.)
+            ip_address: Client IP address
+            details: JSON-serialisable dict of action-specific data
+        """
+        audit = AuditLog(
+            user_id=user_id,
+            claim_id=claim_id,
+            action_type=action_type,
+            action_result=action_result,
+            actor_type='system',
+            actor_id=user_id,
+            details=details,
+            ip_address=ip_address
+        )
+        db.add(audit)
+        db.flush()
 
     @staticmethod
     def get_user_claims(

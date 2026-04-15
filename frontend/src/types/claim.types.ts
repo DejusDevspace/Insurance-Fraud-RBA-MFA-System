@@ -15,6 +15,12 @@ export interface ClaimSubmission {
     session_duration: number;
     pages_visited: number;
     form_fill_time: number;
+    
+    // Optional Demo Overrides
+    device_trust_score?: number;
+    is_trusted_device?: boolean;
+    geolocation_distance_km?: number;
+    is_geolocation_anomaly?: boolean;
 }
 
 export interface Claim {

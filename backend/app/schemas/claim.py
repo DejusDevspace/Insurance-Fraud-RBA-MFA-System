@@ -35,6 +35,12 @@ class ClaimCreate(ClaimBase):
     session_duration: int = Field(..., ge=0, description="Time in seconds from login to claim submission")
     pages_visited: int = Field(..., ge=0, description="Number of pages visited during session")
     form_fill_time: int = Field(..., ge=0, description="Time in seconds to fill the claim form")
+    
+    # Optional Demo Overrides
+    device_trust_score: Optional[float] = Field(None, ge=0.0, le=1.0)
+    is_trusted_device: Optional[bool] = None
+    geolocation_distance_km: Optional[float] = Field(None, ge=0.0)
+    is_geolocation_anomaly: Optional[bool] = None
 
 
 class ClaimResponse(BaseModel):
