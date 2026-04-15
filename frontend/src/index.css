@@ -252,4 +252,22 @@
 		position: relative;
 		z-index: 1;
 	}
+
+	/* Pulse animation for fraud alerts */
+	.animate-pulse-red {
+		animation: pulse-red 2s infinite;
+		border: 2px solid var(--color-error) !;
+	}
+
+	@keyframes pulse-red {
+		0% {
+			box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+		}
+		70% {
+			box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+		}
+		100% {
+			box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+		}
+	}
 }

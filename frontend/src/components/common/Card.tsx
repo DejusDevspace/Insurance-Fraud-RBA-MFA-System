@@ -4,18 +4,20 @@ import clsx from "clsx";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
     hover?: boolean;
+    variant?: "default" | "glass";
 }
 
 export const Card: React.FC<CardProps> = ({
     children,
     hover = false,
+    variant = "default",
     className,
     ...props
 }) => {
     return (
         <div
             className={clsx(
-                "card",
+                variant === "default" ? "card" : "card-glass p-6",
                 hover && "hover:shadow-lg hover:scale-[1.02]",
                 className
             )}

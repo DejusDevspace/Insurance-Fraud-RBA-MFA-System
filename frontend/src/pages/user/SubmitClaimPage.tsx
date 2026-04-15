@@ -180,16 +180,16 @@ const SubmitClaimPage: React.FC = () => {
 	};
 
 	return (
-		<div className="min-h-screen bg-background">
+		<div className="min-h-screen bg-background bg-mesh">
 			<Navbar />
 
-			<div className="max-w-4xl mx-auto px-4 py-8">
+			<div className="max-w-4xl mx-auto px-4 pt-32 pb-12 relative z-10">
 				{/* Header */}
-				<div className="mb-8">
-					<h1 className="text-3xl font-bold text-primary mb-2">
-						Submit New Claim
+				<div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+					<h1 className="text-4xl font-extrabold text-white mb-3">
+						Submit New <span className="my-gradient">Claim</span>
 					</h1>
-					<p className="text-muted">
+					<p className="text-white/50 text-lg">
 						Complete the form below to submit your insurance claim. Our
 						intelligent system will assess the risk and may require additional
 						verification.
@@ -197,54 +197,72 @@ const SubmitClaimPage: React.FC = () => {
 				</div>
 
 				{/* Security Notice */}
-				<Card className="mb-6 border-accent/50 bg-accent/5">
-					<div className="flex items-start gap-4">
-						<Shield className="w-6 h-6 text-accent shrink-0 mt-1" />
+				<Card
+					variant="glass"
+					className="mb-12 border-accent/30 bg-accent/5! relative overflow-hidden group"
+				>
+					<div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+						<Shield className="w-24 h-24 text-accent -mr-8 -mt-8 rotate-12" />
+					</div>
+					<div className="flex items-start gap-6 relative z-10">
+						<div className="p-3 rounded-2xl bg-accent/20 border border-accent/30 shrink-0">
+							<Shield className="w-8 h-8 text-accent" />
+						</div>
 						<div>
-							<h3 className="text-lg font-semibold text-primary mb-2">
-								Risk-Based Authentication
+							<h3 className="text-xl font-bold text-white mb-2">
+								Neural Risk Assessment Active
 							</h3>
-							<p className="text-sm text-muted">
-								Your claim will be automatically assessed for risk factors.
-								High-risk claims may require additional verification (OTP or
-								biometric) for enhanced security.
+							<p className="text-white/60 text-lg max-w-2xl leading-relaxed">
+								Your claim is being analyzed in real-time for behavioral and
+								environmental risk factors. High-entropy claims may trigger
+								additional{" "}
+								<span className="text-accent font-bold">MFA protocols</span> for
+								your protection.
 							</p>
 						</div>
 					</div>
 				</Card>
 
 				{/* Claim Form */}
-				<Card>
-					<form onSubmit={handleSubmit} className="space-y-6">
-						{/* Claim Type */}
-						<Select
-							label="Claim Type"
-							value={formData.claim_type}
-							onChange={(e) => handleChange("claim_type", e.target.value)}
-							icon={<FileText className="w-5 h-5" />}
-							options={[
-								{ value: "accident", label: "Accident" },
-								{ value: "theft", label: "Theft" },
-								{ value: "medical", label: "Medical" },
-								{
-									value: "property_damage",
-									label: "Propery Damage",
-								},
-								{ value: "other", label: "Other" },
-							]}
-							disabled={loading}
-							required
-						>
-							<option value="accident">Accident</option>
-							<option value="theft">Theft</option>
-							<option value="medical">Medical</option>
-							<option value="property_damage">Property Damage</option>
-							<option value="other">Other</option>
-						</Select>
+				<Card variant="glass" className="border-white/10 shadow-2xl">
+					<form onSubmit={handleSubmit} className="space-y-8">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+							{/* Claim Type */}
+							<Select
+								label="Claim Type"
+								value={formData.claim_type}
+								onChange={(e) => handleChange("claim_type", e.target.value)}
+								icon={<FileText className="w-5 h-5" />}
+								options={[
+									{ value: "accident", label: "Accident" },
+									{ value: "theft", label: "Theft" },
+									{ value: "medical", label: "Medical" },
+									{
+										value: "property_damage",
+										label: "Propery Damage",
+									},
+									{ value: "other", label: "Other" },
+								]}
+								disabled={loading}
+								required
+							/>
+
+							{/* Incident Date */}
+							<Input
+								label="Incident Date"
+								type="date"
+								value={formData.incident_date}
+								onChange={(e) => handleChange("incident_date", e.target.value)}
+								icon={<Calendar className="w-5 h-5" />}
+								disabled={loading}
+								required
+								max={new Date().toISOString().split("T")[0]}
+							/>
+						</div>
 
 						{/* Claim Amount */}
 						<Input
-							label="Claim Amount"
+							label="Estimated Claim Amount"
 							type="number"
 							value={formData.claim_amount || ""}
 							onChange={(e) =>
@@ -258,40 +276,29 @@ const SubmitClaimPage: React.FC = () => {
 							step="0.01"
 							helperText={
 								formData.claim_amount > 0
-									? formatCurrency(formData.claim_amount)
-									: undefined
+									? `Verified Value: ${formatCurrency(formData.claim_amount)}`
+									: "Enter the estimated loss in Naira (NGN)"
 							}
-						/>
-
-						{/* Incident Date */}
-						<Input
-							label="Incident Date"
-							type="date"
-							value={formData.incident_date}
-							onChange={(e) => handleChange("incident_date", e.target.value)}
-							icon={<Calendar className="w-5 h-5" />}
-							disabled={loading}
-							required
-							max={new Date().toISOString().split("T")[0]}
 						/>
 
 						{/* Description */}
 						<Textarea
-							label="Claim Description"
+							label="Incident Narrative"
 							value={formData.claim_description}
 							onChange={(e) =>
 								handleChange("claim_description", e.target.value)
 							}
-							placeholder="Provide a detailed description of the incident..."
+							placeholder="Provide a detailed chronological narrative of the incident..."
 							disabled={loading}
 							required
-							rows={5}
-							helperText="Minimum 10 characters required"
+							rows={6}
+							className="bg-background/50!"
+							helperText="Detailed descriptions reduce risk scores and accelerate processing."
 						/>
 
 						{/* Supporting Documents Count */}
 						<Input
-							label="Number of Supporting Documents"
+							label="Supporting Metadata (Documents)"
 							type="number"
 							value={formData.supporting_documents_count}
 							onChange={(e) =>
@@ -305,50 +312,54 @@ const SubmitClaimPage: React.FC = () => {
 							disabled={loading}
 							min="0"
 							max="10"
-							helperText="Enter the number of documents you have prepared (0-10)"
+							helperText="Total number of digital evidence files prepared for submission (0-10)"
 						/>
 
 						{/* Demo Controls Panel */}
-						<div className="border border-aux rounded-lg overflow-hidden bg-background">
+						<div className="rounded-2xl overflow-hidden bg-background/40 border border-white/5">
 							<button
 								type="button"
 								onClick={() => setShowDemoControls(!showDemoControls)}
-								className="w-full flex items-center justify-between p-4 bg-surface hover:bg-surface/80 transition-colors"
+								className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-colors"
 							>
-								<div className="flex items-center gap-2 text-primary font-medium">
-									<Settings className="w-5 h-5 text-accent" />
-									Demo Controls (Context Overrides)
+								<div className="flex items-center gap-3 text-white/50 font-bold uppercase tracking-widest text-xs">
+									<Settings className="w-4 h-4 text-accent" />
+									Simulation Environment Overrides
 								</div>
 								{showDemoControls ? (
-									<ChevronUp className="w-5 h-5 text-muted" />
+									<ChevronUp className="w-5 h-5 text-white/20" />
 								) : (
-									<ChevronDown className="w-5 h-5 text-muted" />
+									<ChevronDown className="w-5 h-5 text-white/20" />
 								)}
 							</button>
 
 							{showDemoControls && (
-								<div className="p-4 space-y-4 border-t border-aux">
-									<p className="text-sm text-muted">
-										These options simulate context that the backend would normally extract automatically. Overriding these affects the generated Risk Assessment.
-									</p>
-
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<div className="p-6 space-y-6 border-t border-white/5 bg-black/20">
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 										{/* Trusted Device */}
-										<div className="flex items-center justify-between p-3 rounded bg-surface border border-aux">
-											<label className="text-sm font-medium text-primary">Is Trusted Device?</label>
+										<div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5">
+											<label className="text-sm font-bold text-white/60">
+												Device Integrity Certificate
+											</label>
 											<input
 												type="checkbox"
 												checked={formData.is_trusted_device || false}
-												onChange={(e) => handleChange("is_trusted_device", e.target.checked)}
-												className="w-4 h-4 text-accent border-aux focus:ring-accent rounded"
+												onChange={(e) =>
+													handleChange("is_trusted_device", e.target.checked)
+												}
+												className="w-5 h-5 accent-accent"
 											/>
 										</div>
 
 										{/* Device Trust Score */}
-										<div className="flex flex-col gap-1 p-3 rounded bg-surface border border-aux">
+										<div className="flex flex-col gap-3 p-4 rounded-xl bg-white/5 border border-white/5">
 											<div className="flex justify-between items-center">
-												<label className="text-sm font-medium text-primary">Device Trust Score</label>
-												<span className="text-xs text-muted font-mono">{formData.device_trust_score ?? 0.5}</span>
+												<label className="text-sm font-bold text-white/60">
+													Trust Vector Magnitude
+												</label>
+												<span className="text-xs text-accent font-black font-mono">
+													{(formData.device_trust_score ?? 0.5).toFixed(1)}
+												</span>
 											</div>
 											<input
 												type="range"
@@ -356,30 +367,49 @@ const SubmitClaimPage: React.FC = () => {
 												max="1"
 												step="0.1"
 												value={formData.device_trust_score ?? 0.5}
-												onChange={(e) => handleChange("device_trust_score", parseFloat(e.target.value))}
+												onChange={(e) =>
+													handleChange(
+														"device_trust_score",
+														parseFloat(e.target.value),
+													)
+												}
 												className="w-full accent-accent"
 											/>
 										</div>
 
 										{/* Geolocation Anomaly */}
-										<div className="flex items-center justify-between p-3 rounded bg-surface border border-aux">
-											<label className="text-sm font-medium text-primary">Is Geolocation Anomaly?</label>
+										<div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5">
+											<label className="text-sm font-bold text-white/60">
+												Geo-Spatial Anomaly
+											</label>
 											<input
 												type="checkbox"
 												checked={formData.is_geolocation_anomaly || false}
-												onChange={(e) => handleChange("is_geolocation_anomaly", e.target.checked)}
-												className="w-4 h-4 text-accent border-aux focus:ring-accent rounded"
+												onChange={(e) =>
+													handleChange(
+														"is_geolocation_anomaly",
+														e.target.checked,
+													)
+												}
+												className="w-5 h-5 accent-accent"
 											/>
 										</div>
 
 										{/* Geolocation Distance */}
-										<div className="flex flex-col gap-1 p-3 rounded bg-surface border border-aux">
-											<label className="text-sm font-medium text-primary">Geolocation Distance (km)</label>
+										<div className="flex flex-col gap-1 p-4 rounded-xl bg-white/5 border border-white/5">
+											<label className="text-sm font-bold text-white/60">
+												Anomalous Distance (km)
+											</label>
 											<input
 												type="number"
 												value={formData.geolocation_distance_km ?? 120}
-												onChange={(e) => handleChange("geolocation_distance_km", parseFloat(e.target.value))}
-												className="w-full px-3 py-1.5 text-sm bg-background border border-aux rounded text-primary focus:border-accent focus:ring-1 focus:ring-accent"
+												onChange={(e) =>
+													handleChange(
+														"geolocation_distance_km",
+														parseFloat(e.target.value),
+													)
+												}
+												className="w-full bg-transparent border-none text-accent font-black text-xl focus:ring-0 p-0"
 											/>
 										</div>
 									</div>
@@ -387,39 +417,25 @@ const SubmitClaimPage: React.FC = () => {
 							)}
 						</div>
 
-						{/* Info Notice */}
-						<div className="flex items-start gap-3 p-4 rounded-lg bg-surface border border-aux">
-							<AlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-							<div className="text-sm text-muted">
-								<p className="font-medium text-primary mb-1">
-									Important Notice
-								</p>
-								<p>
-									This is a demo system. Document uploads are simulated. In a
-									production environment, you would upload actual supporting
-									documents here.
-								</p>
-							</div>
-						</div>
-
 						{/* Submit Button */}
-						<div className="flex gap-4 pt-4">
+						<div className="flex gap-4 pt-8">
 							<Button
 								type="button"
 								variant="secondary"
 								onClick={() => navigate("/dashboard")}
 								disabled={loading}
+								className="px-8 border-white/10 hover:bg-white/5"
 							>
-								Cancel
+								Discard
 							</Button>
 							<Button
 								type="submit"
 								variant="primary"
 								isLoading={loading}
 								icon={<CheckCircle className="w-5 h-5" />}
-								className="flex-1"
+								className="flex-1 h-14 text-lg font-bold shadow-lg shadow-accent/20"
 							>
-								Submit Claim
+								Finalize Submission
 							</Button>
 						</div>
 					</form>
@@ -431,20 +447,23 @@ const SubmitClaimPage: React.FC = () => {
 				<Modal
 					isOpen={showMFAModal}
 					onClose={handleMFACancel}
-					title="Additional Verification Required"
+					title="Neural Verification Challenge"
 					size="md"
 				>
-					<div className="space-y-4">
-						<div className="flex items-start gap-3 p-4 rounded-lg bg-warning/10 border border-warning">
-							<AlertCircle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
+					<div className="space-y-6">
+						<div className="flex items-start gap-4 p-5 rounded-2xl bg-warning/10 border border-warning/20 animate-pulse-red">
+							<AlertCircle className="w-6 h-6 text-warning shrink-0 mt-0.5" />
 							<div className="text-sm">
-								<p className="font-medium text-primary mb-1">
-									Risk Assessment:{" "}
-									{claimResponse.risk_assessment.risk_level.toUpperCase()}
+								<p className="font-black text-white uppercase tracking-widest text-xs mb-2">
+									High Probability Risk Detected
 								</p>
-								<p className="text-muted">
-									Your claim has been flagged for additional verification to
-									ensure security. Please complete the verification below.
+								<p className="text-white/60 text-base leading-relaxed">
+									Assessment Level:{" "}
+									<span className="text-warning font-black">
+										{claimResponse.risk_assessment.risk_level.toUpperCase()}
+									</span>
+									. Additional biometric or cryptographic verification is
+									required to authorize this claim.
 								</p>
 							</div>
 						</div>
