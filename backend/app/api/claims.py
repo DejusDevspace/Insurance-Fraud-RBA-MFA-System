@@ -70,7 +70,7 @@ def submit_claim(
         transaction_hour = now.hour
         transaction_day = now.weekday()
 
-        # Build context data
+        # Build context data. Use demo overrides from frontend if provided to simulate varying conditions
         context_data = {
             'ip_address': client_ip,
             'geolocation': {
@@ -78,16 +78,16 @@ def submit_claim(
                 'state': current_user.state,
                 'country': current_user.country
             },
-            'is_geolocation_anomaly': False,  # Would be calculated based on user's typical location
-            'geolocation_distance_km': 120,  # Distance from user's typical location
+            'is_geolocation_anomaly': claim_data.is_geolocation_anomaly if claim_data.is_geolocation_anomaly is not None else False,
+            'geolocation_distance_km': claim_data.geolocation_distance_km if claim_data.geolocation_distance_km is not None else 120,
             'device': {
-                'fingerprint': device_fingerprint,  # TODO: How to get fingerprint and save in db
-                'type': 'desktop',  # TODO: Would be detected from user agent
-                'os': 'Unknown',  # TODO: From user agent?
-                'browser': 'Unknown'  # TODO: From user agent?
+                'fingerprint': device_fingerprint,
+                'type': 'desktop',
+                'os': 'Unknown',
+                'browser': 'Unknown'
             },
-            'device_trust_score': 0.5,
-            'is_trusted_device': False,
+            'device_trust_score': claim_data.device_trust_score if claim_data.device_trust_score is not None else 0.5,
+            'is_trusted_device': claim_data.is_trusted_device if claim_data.is_trusted_device is not None else False,
             'session_duration': claim_data.session_duration,
             'pages_visited': claim_data.pages_visited,
             'form_fill_time': claim_data.form_fill_time,

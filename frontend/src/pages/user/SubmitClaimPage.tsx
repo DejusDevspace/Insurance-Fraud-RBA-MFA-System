@@ -19,6 +19,9 @@ import {
 	AlertCircle,
 	Shield,
 	CheckCircle,
+	Settings,
+	ChevronDown,
+	ChevronUp,
 } from "lucide-react";
 import type {
 	ClaimSubmission,
@@ -47,10 +50,11 @@ const SubmitClaimPage: React.FC = () => {
 	const [mfaMethod, setMfaMethod] = useState<"otp" | "biometric" | null>(null);
 	const [claimResponse, setClaimResponse] =
 		useState<ClaimSubmissionResponse | null>(null);
+	const [showDemoControls, setShowDemoControls] = useState(false);
 
 	const handleChange = (
 		field: keyof ClaimSubmission,
-		value: string | number,
+		value: string | number | boolean,
 	) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
 	};
@@ -303,6 +307,85 @@ const SubmitClaimPage: React.FC = () => {
 							max="10"
 							helperText="Enter the number of documents you have prepared (0-10)"
 						/>
+
+						{/* Demo Controls Panel */}
+						<div className="border border-aux rounded-lg overflow-hidden bg-background">
+							<button
+								type="button"
+								onClick={() => setShowDemoControls(!showDemoControls)}
+								className="w-full flex items-center justify-between p-4 bg-surface hover:bg-surface/80 transition-colors"
+							>
+								<div className="flex items-center gap-2 text-primary font-medium">
+									<Settings className="w-5 h-5 text-accent" />
+									Demo Controls (Context Overrides)
+								</div>
+								{showDemoControls ? (
+									<ChevronUp className="w-5 h-5 text-muted" />
+								) : (
+									<ChevronDown className="w-5 h-5 text-muted" />
+								)}
+							</button>
+
+							{showDemoControls && (
+								<div className="p-4 space-y-4 border-t border-aux">
+									<p className="text-sm text-muted">
+										These options simulate context that the backend would normally extract automatically. Overriding these affects the generated Risk Assessment.
+									</p>
+
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+										{/* Trusted Device */}
+										<div className="flex items-center justify-between p-3 rounded bg-surface border border-aux">
+											<label className="text-sm font-medium text-primary">Is Trusted Device?</label>
+											<input
+												type="checkbox"
+												checked={formData.is_trusted_device || false}
+												onChange={(e) => handleChange("is_trusted_device", e.target.checked)}
+												className="w-4 h-4 text-accent border-aux focus:ring-accent rounded"
+											/>
+										</div>
+
+										{/* Device Trust Score */}
+										<div className="flex flex-col gap-1 p-3 rounded bg-surface border border-aux">
+											<div className="flex justify-between items-center">
+												<label className="text-sm font-medium text-primary">Device Trust Score</label>
+												<span className="text-xs text-muted font-mono">{formData.device_trust_score ?? 0.5}</span>
+											</div>
+											<input
+												type="range"
+												min="0"
+												max="1"
+												step="0.1"
+												value={formData.device_trust_score ?? 0.5}
+												onChange={(e) => handleChange("device_trust_score", parseFloat(e.target.value))}
+												className="w-full accent-accent"
+											/>
+										</div>
+
+										{/* Geolocation Anomaly */}
+										<div className="flex items-center justify-between p-3 rounded bg-surface border border-aux">
+											<label className="text-sm font-medium text-primary">Is Geolocation Anomaly?</label>
+											<input
+												type="checkbox"
+												checked={formData.is_geolocation_anomaly || false}
+												onChange={(e) => handleChange("is_geolocation_anomaly", e.target.checked)}
+												className="w-4 h-4 text-accent border-aux focus:ring-accent rounded"
+											/>
+										</div>
+
+										{/* Geolocation Distance */}
+										<div className="flex flex-col gap-1 p-3 rounded bg-surface border border-aux">
+											<label className="text-sm font-medium text-primary">Geolocation Distance (km)</label>
+											<input
+												type="number"
+												value={formData.geolocation_distance_km ?? 120}
+												onChange={(e) => handleChange("geolocation_distance_km", parseFloat(e.target.value))}
+												className="w-full px-3 py-1.5 text-sm bg-background border border-aux rounded text-primary focus:border-accent focus:ring-1 focus:ring-accent"
+											/>
+										</div>
+									</div>
+								</div>
+							)}
+						</div>
 
 						{/* Info Notice */}
 						<div className="flex items-start gap-3 p-4 rounded-lg bg-surface border border-aux">
