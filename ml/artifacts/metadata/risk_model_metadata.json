@@ -1,7 +1,7 @@
 {
   "model_type": "XGBoost Classifier",
   "objective": "Multi-class Risk Classification (Low/Medium/High)",
-  "training_date": "2026-04-15T13:53:04.765380",
+  "training_date": "2026-04-17T20:17:27.460697",
   "n_features": 40,
   "n_training_samples": 7110,
   "n_test_samples": 3048,
