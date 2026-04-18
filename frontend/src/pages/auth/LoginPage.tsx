@@ -65,7 +65,7 @@ const LoginPage: React.FC = () => {
                         <div className="w-12 h-12 rounded-xl bg-accent/20 backdrop-blur-md flex items-center justify-center border border-accent/30">
                             <Shield className="w-7 h-7 text-accent" />
                         </div>
-                        <span className="text-2xl font-bold tracking-tight text-white">InsureGuard <span className="text-accent">AI</span></span>
+                        <span className="text-2xl font-bold tracking-tight text-white">Insurance <span className="text-accent">Portal</span></span>
                     </div>
 
                     <div className="max-w-md">
@@ -90,7 +90,7 @@ const LoginPage: React.FC = () => {
 
                 <div className="relative z-10">
                     <p className="text-white/50 text-sm">
-                        &copy; 2026 InsureGuard AI Systems. All rights reserved.
+                        &copy; 2026 Insurance Fraud Protection. All rights reserved.
                     </p>
                 </div>
             </div>

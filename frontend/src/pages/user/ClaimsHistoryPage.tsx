@@ -205,7 +205,7 @@ const ClaimsHistoryPage: React.FC = () => {
 						</h3>
 						<p className="text-white/40 mb-10 max-w-md mx-auto">
 							{filterStatus === "all"
-								? "Your claim history is currently empty. Start your journey with InsureGuard AI today."
+								? "Your claim history is currently empty. Start your journey with our Insurance Portal today."
 								: `There are no claims currently matching the '${filterStatus}' filtration criteria.`}
 						</p>
 						{filterStatus === "all" ? (

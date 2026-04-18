@@ -139,7 +139,7 @@ const RegisterPage: React.FC = () => {
 							<Shield className="w-6 h-6 text-accent" />
 						</div>
 						<span className="text-xl font-bold tracking-tight text-white">
-							InsureGuard <span className="text-accent">AI</span>
+							Insurance <span className="text-accent">Portal</span>
 						</span>
 					</Link>
 
@@ -149,7 +149,7 @@ const RegisterPage: React.FC = () => {
 							<span className="my-gradient">Future</span> of <br />
 							Insurance.
 						</h2>
-						<p className="text-white/60 text-lg">
+						<p className="text-white/70 text-lg">
 							Get started in minutes with our streamlined registration process.
 						</p>
 					</div>

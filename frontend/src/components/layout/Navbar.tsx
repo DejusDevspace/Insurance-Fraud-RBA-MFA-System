@@ -60,7 +60,7 @@ const Navbar: React.FC = () => {
 							<Shield className="w-6 h-6 text-accent" />
 						</div>
 						<span className="text-xl font-bold tracking-tight text-white hidden sm:block">
-							InsureGuard <span className="my-gradient">AI</span>
+							Fraud <span className="my-gradient">Protection</span>
 						</span>
 					</Link>
 

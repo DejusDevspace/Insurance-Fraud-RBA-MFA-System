@@ -162,7 +162,7 @@ const ClaimDetailsPage: React.FC = () => {
 						</h2>
 						<p className="text-white/40 mb-10 text-lg">
 							The neural signature for this claim ID could not be located in the
-							InsureGuard repository.
+							Insurance Fraud repository.
 						</p>
 						<Button
 							variant="primary"
