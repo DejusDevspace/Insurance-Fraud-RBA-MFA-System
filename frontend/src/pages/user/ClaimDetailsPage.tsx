@@ -269,7 +269,7 @@ const ClaimDetailsPage: React.FC = () => {
 						</div>
 						<div>
 							<p className="text-white/30 text-[10px] font-black uppercase tracking-widest mb-3 italic">
-								Asset Valuation
+								Claim Amount
 							</p>
 							<p className="text-lg font-bold text-white">
 								{formatCurrency(claim.claim_amount)}
@@ -277,7 +277,7 @@ const ClaimDetailsPage: React.FC = () => {
 						</div>
 						<div>
 							<p className="text-white/30 text-[10px] font-black uppercase tracking-widest mb-3 italic">
-								Temporal Marker (Incident)
+								Incident Date
 							</p>
 							<p className="text-lg font-bold text-white">
 								{new Date(claim.incident_date).toLocaleDateString("en-US", {
@@ -291,7 +291,7 @@ const ClaimDetailsPage: React.FC = () => {
 							<p className="text-white/30 text-[10px] font-black uppercase tracking-widest mb-3 italic">
 								System Ingestion
 							</p>
-							<p className="text-lg font-bold text-white">
+							<p className="text-md font-bold text-white">
 								{formatDate(claim.submitted_at)}
 							</p>
 						</div>
@@ -300,7 +300,7 @@ const ClaimDetailsPage: React.FC = () => {
 					{/* Description */}
 					<div className="mt-10">
 						<h3 className="text-sm font-black text-white/40 uppercase tracking-[0.2em] mb-4">
-							Operational Narrative
+							Claim Description
 						</h3>
 						<div className="bg-background/40 p-6 rounded-2xl border border-white/5 text-white/70 leading-loose text-lg font-medium italic">
 							"{claim.claim_description}"
@@ -312,7 +312,7 @@ const ClaimDetailsPage: React.FC = () => {
 						<div className="flex items-center gap-3">
 							<FileText className="w-5 h-5 text-accent" />
 							<span className="text-sm font-bold text-white/60 uppercase tracking-widest">
-								Metadata Artifacts
+								Supporting Documents
 							</span>
 						</div>
 						<span className="text-lg font-black text-white">
@@ -329,7 +329,7 @@ const ClaimDetailsPage: React.FC = () => {
 								</div>
 								<div>
 									<h3 className="text-xl font-bold text-white mb-2">
-										Rejection Descriptor
+										Rejection Reason
 									</h3>
 									<p className="text-white/60 text-base leading-relaxed">
 										{claim.rejection_reason}
@@ -366,14 +366,14 @@ const ClaimDetailsPage: React.FC = () => {
 				{/* Processing Timeline */}
 				<Card variant="glass" className="border-white/10">
 					<h2 className="text-2xl font-black text-white mb-10 uppercase tracking-widest">
-						Node Processing Timeline
+						Claim Processing Timeline
 					</h2>
-					<div className="relative space-y-12 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-white/5">
+					<div className="relative space-y-12 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5px before:bg-white/5">
 						<div className="flex items-start gap-8 relative z-10 transition-all hover:translate-x-1">
 							<div className="w-6 h-6 rounded-full bg-accent ring-8 ring-accent/10 mt-1.5 flex items-center justify-center border-4 border-background"></div>
 							<div className="flex-1">
 								<p className="text-xl font-black text-white mb-1">
-									Claim Ingestion Sequence Initiated
+									Claim Submitted
 								</p>
 								<p className="text-sm font-bold text-white/30 uppercase tracking-widest">
 									{formatDate(claim.submitted_at)}
@@ -385,7 +385,7 @@ const ClaimDetailsPage: React.FC = () => {
 								<div className="w-6 h-6 rounded-full bg-success ring-8 ring-success/10 mt-1.5 flex items-center justify-center border-4 border-background"></div>
 								<div className="flex-1">
 									<p className="text-xl font-black text-white mb-1">
-										Neural Finalization Sequence Complete
+										Claim Processed
 									</p>
 									<p className="text-sm font-bold text-white/30 uppercase tracking-widest">
 										{formatDate(claim.processed_at)}

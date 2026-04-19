@@ -275,8 +275,8 @@ const ClaimsHistoryPage: React.FC = () => {
 															)}
 													</div>
 													<p className="text-white/40 font-bold uppercase tracking-widest text-[11px]">
-														{claim.claim_type.replace(/_/g, " ")} • System Node:
-														0x{claim.claim_id.slice(0, 4)}
+														{claim.claim_type.replace(/_/g, " ")} • Claim ID:
+														{claim.claim_id}
 													</p>
 												</div>
 												<div className="text-left md:text-right">

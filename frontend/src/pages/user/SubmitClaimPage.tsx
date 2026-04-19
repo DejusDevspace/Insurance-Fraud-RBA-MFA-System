@@ -185,7 +185,7 @@ const SubmitClaimPage: React.FC = () => {
 				{/* Header */}
 				<div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
 					<h1 className="text-4xl font-extrabold text-white mb-3">
-						Claim Intelligence <span className="my-gradient">Lab</span>
+						Claim Submission <span className="my-gradient">Portal</span>
 					</h1>
 					<p className="text-white/50 text-lg max-w-2xl">
 						Securely submit your insurance claim. Our neural assessment system
