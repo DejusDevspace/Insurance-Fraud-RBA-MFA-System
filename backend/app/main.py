@@ -51,6 +51,10 @@ async def lifespan(app: FastAPI):
         logger.info("✓ ML models loaded successfully")
 
         logger.info("=" * 70)
+        print("Origins:", [o.strip()for o in settings.ALLOWED_ORIGINS.split(",")])
+        print("Origin Regex:", settings.ALLOWED_ORIGIN_REGEX)
+        logger.info("=" * 70)
+
         logger.info("APPLICATION STARTED SUCCESSFULLY")
         logger.info("=" * 70)
         logger.info(
