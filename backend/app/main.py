@@ -2,6 +2,8 @@ from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+
 from contextlib import asynccontextmanager
 import logging
 import sys
@@ -84,6 +86,8 @@ app = FastAPI(
     openapi_url="/openapi.json",
     lifespan=lifespan
 )
+
+app.add_middleware(ProxyHeadersMiddleware)
 
 # CORS Configuration
 app.add_middleware(
