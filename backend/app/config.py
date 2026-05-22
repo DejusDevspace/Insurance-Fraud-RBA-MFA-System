@@ -26,6 +26,7 @@ class Settings(BaseSettings):
 
     # CORS
     ALLOWED_ORIGINS: str
+    ALLOWED_ORIGIN_REGEX: str
 
     # ML Models
     MODELS_PATH: str = "./models"

@@ -53,7 +53,8 @@ async def lifespan(app: FastAPI):
         logger.info("=" * 70)
         logger.info("APPLICATION STARTED SUCCESSFULLY")
         logger.info("=" * 70)
-        logger.info(f"Environment: {'Development' if settings.DEBUG else 'Production'}")
+        logger.info(
+            f"Environment: {'Development' if settings.DEBUG else 'Production'}")
         logger.info(f"API Version: {settings.VERSION}")
         logger.info(f"Documentation: http://localhost:8000/docs")
         logger.info("=" * 70)
@@ -81,11 +82,10 @@ app = FastAPI(
 )
 
 # CORS Configuration
-origins = settings.ALLOWED_ORIGINS.split(",")
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[o.strip() for o in settings.ALLOWED_ORIGINS.split(",")],
+    allow_origin_regex=settings.ALLOWED_ORIGIN_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -261,7 +261,6 @@ if settings.DEBUG:
             },
             "fraud_threshold": settings.FRAUD_PROBABILITY_THRESHOLD
         }
-
 
     @app.get("/debug/models", tags=["Debug"])
     def debug_models():
